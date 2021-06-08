@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/channels_provider.dart';
 
 class RadioChannelsBottomNavigatorBar extends StatelessWidget {
   @override
@@ -8,8 +10,10 @@ class RadioChannelsBottomNavigatorBar extends StatelessWidget {
         BottomNavigationBarItem(
           label: 'All',
           icon: IconButton(
-            icon: Icon(Icons.all_out),
-            onPressed: () {},
+            icon: Icon(Icons.all_out_rounded),
+            onPressed: () {
+              Provider.of<ChannelsProvider>(context, listen: false).showAll();
+            },
           ),
         ),
         BottomNavigationBarItem(
@@ -17,7 +21,7 @@ class RadioChannelsBottomNavigatorBar extends StatelessWidget {
           icon: IconButton(
             icon: Icon(Icons.favorite),
             onPressed: () {
-              //TODO: toggle to fav
+              Provider.of<ChannelsProvider>(context, listen: false).showFav();
             },
           ),
         ),
