@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:radio/providers/channels_provider.dart';
+import '../models/channel.dart';
 import '../constatnts.dart';
 import '../providers/player_provider.dart';
 import './scrolling_text.dart';
 
 class ChannelGridViewItem extends StatelessWidget {
-  final String imageURL;
-  final String channelName;
-  final String url;
-  ChannelGridViewItem(
-      {@required this.imageURL,
-      @required this.channelName,
-      @required this.url});
+  final Channel channel;
+  ChannelGridViewItem({
+    @required this.channel,
+  });
   @override
   Widget build(BuildContext context) {
     final prov = Provider.of<PlayerProvider>(context, listen: false);
     return GestureDetector(
       onTap: () {
-        prov.setURL(url);
-        prov.setCurrentChannel(channelName);
+        prov.setURL(channel.url);
+        prov.setCurrentChannel(channel.name);
         prov.isPlaying() ? prov.pause() : prov.play();
       },
       onLongPress: () {
@@ -30,7 +29,7 @@ class ChannelGridViewItem extends StatelessWidget {
               child: FadeInImage(
                 placeholder: AssetImage(radioImage),
                 image: NetworkImage(
-                  imageURL,
+                  channel.imageUrl,
                 ),
               ),
             ),
@@ -38,7 +37,7 @@ class ChannelGridViewItem extends StatelessWidget {
               backgroundColor: Colors.teal,
               title: Center(
                 child: Text(
-                  channelName,
+                  channel.name,
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -52,25 +51,31 @@ class ChannelGridViewItem extends StatelessWidget {
           child: FadeInImage(
             placeholder: AssetImage(radioImage),
             image: NetworkImage(
-              imageURL,
+              channel.imageUrl,
             ),
           ),
         ),
         footer: GridTileBar(
           backgroundColor: Colors.teal,
           title: ScrollingText(
-            text: channelName,
+            text: channel.name,
             textStyle: TextStyle(fontSize: 15),
           ),
           leading: IconButton(
-              icon: Icon(Icons.favorite),
+              icon: Icon(Icons.favorite,
+                  color: channel.isFavourite ? Colors.red : Colors.white),
               onPressed: () {
-                //TODO: add to fav
+                Provider.of<ChannelsProvider>(context, listen: false)
+                    .toggleFavorite(channel.id);
               }),
           trailing: IconButton(
-            icon: Icon(Icons.delete),
+            icon: Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
             onPressed: () {
-              //TODO: remove channel
+              Provider.of<ChannelsProvider>(context, listen: false)
+                  .deleteChannel(channel.id);
             },
           ),
         ),
@@ -80,21 +85,18 @@ class ChannelGridViewItem extends StatelessWidget {
 }
 
 class ChannelListViewItem extends StatelessWidget {
-  final String imageURL;
-  final String channelName;
-  final String url;
-  ChannelListViewItem(
-      {@required this.imageURL,
-      @required this.channelName,
-      @required this.url});
+  final Channel channel;
+  ChannelListViewItem({
+    @required this.channel,
+  });
 
   @override
   Widget build(BuildContext context) {
     final prov = Provider.of<PlayerProvider>(context, listen: false);
     return GestureDetector(
       onTap: () {
-        prov.setURL(url);
-        prov.setCurrentChannel(channelName);
+        prov.setURL(channel.url);
+        prov.setCurrentChannel(channel.name);
         prov.isPlaying() ? prov.pause() : prov.play();
       },
       onLongPress: () {
@@ -106,7 +108,7 @@ class ChannelListViewItem extends StatelessWidget {
               child: FadeInImage(
                 placeholder: AssetImage(radioImage),
                 image: NetworkImage(
-                  imageURL,
+                  channel.imageUrl,
                 ),
               ),
             ),
@@ -114,7 +116,7 @@ class ChannelListViewItem extends StatelessWidget {
               backgroundColor: Colors.teal,
               title: Center(
                 child: Text(
-                  channelName,
+                  channel.name,
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -127,11 +129,11 @@ class ChannelListViewItem extends StatelessWidget {
           tag: 'channel-tile-logo',
           child: FadeInImage(
             placeholder: AssetImage(radioImage),
-            image: NetworkImage(imageURL),
+            image: NetworkImage(channel.imageUrl),
           ),
         ),
         title: Text(
-          channelName,
+          channel.name,
           style: TextStyle(fontSize: 15),
         ),
         trailing: Row(
@@ -139,15 +141,20 @@ class ChannelListViewItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
-              icon: Icon(Icons.favorite),
+              icon: Icon(
+                Icons.favorite,
+                color: channel.isFavourite ? Colors.red : Colors.grey,
+              ),
               onPressed: () {
-                //TODO: add to fav
+                Provider.of<ChannelsProvider>(context, listen: false)
+                    .toggleFavorite(channel.id);
               },
             ),
             IconButton(
               icon: Icon(Icons.delete),
               onPressed: () {
-                //TODO: remove channel
+                Provider.of<ChannelsProvider>(context, listen: false)
+                    .deleteChannel(channel.id);
               },
             ),
           ],

@@ -7,9 +7,9 @@ import '../providers/player_provider.dart';
 import '../models/channel.dart';
 import '../providers/channels_provider.dart';
 import '../providers/countries_provider.dart';
-import '../widgets/channel_item.dart';
-import '../widgets/radio_drawer.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/radio_channels_bottom_navigator_bar.dart';
+import '../widgets/channels_view.dart';
 
 enum view { List, Grid }
 
@@ -24,10 +24,8 @@ class _RadioChannelesScreenState extends State<RadioChannelesScreen> {
   String _viewType = describeEnum(view.Grid);
   String _currentCountry = 'Syrian Arab Republic';
   bool _isLoading = true;
-  bool _activeSearch = false;
   List<String> _countries = [];
   List<Channel> _channels = [];
-  List<Channel> _searchResult = [];
   void toggleViewType() {
     _viewType == describeEnum(view.Grid)
         ? _viewType = describeEnum(view.List)
@@ -41,29 +39,36 @@ class _RadioChannelesScreenState extends State<RadioChannelesScreen> {
 
   @override
   void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
     Future.delayed(Duration(seconds: 0)).then((value) async {
       setState(() {
         _isLoading = true;
       });
       final pref = await SharedPreferences.getInstance();
-      _currentCountry = pref.containsKey('country')
-          ? pref.getString('country')
-          : 'Syrian Arab Republic';
+      setState(() {
+        _currentCountry = pref.containsKey('country')
+            ? pref.getString('country')
+            : 'Syrian Arab Republic';
+      });
       await Provider.of<CountriesProvider>(context, listen: false)
           .updateCountries();
       await Provider.of<ChannelsProvider>(context, listen: false)
           .updateChannels(_currentCountry);
-      setState(() {
-        _countries =
-            Provider.of<CountriesProvider>(context, listen: false).countries;
-        _channels =
-            Provider.of<ChannelsProvider>(context, listen: false).channels;
-      });
+
+      _countries =
+          Provider.of<CountriesProvider>(context, listen: false).countries;
+      _channels =
+          Provider.of<ChannelsProvider>(context, listen: false).channels;
+
       setState(() {
         _isLoading = false;
       });
     });
-    super.initState();
+    super.didChangeDependencies();
   }
 
   @override
@@ -89,39 +94,6 @@ class _RadioChannelesScreenState extends State<RadioChannelesScreen> {
                         .play();
                   }),
           IconButton(
-            onPressed: () {
-              setState(() {
-                _activeSearch = !_activeSearch;
-              });
-              showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    String name;
-                    return Container(
-                      child: Column(
-                        children: [
-                          TextField(
-                            onChanged: (value) {
-                              name = value;
-                            },
-                          ),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                _searchResult = Provider.of<ChannelsProvider>(
-                                        context,
-                                        listen: false)
-                                    .search(name);
-                              },
-                              child: Text('Search')),
-                        ],
-                      ),
-                    );
-                  });
-            },
-            icon: Icon(Icons.search),
-          ),
-          IconButton(
               icon: Icon(
                 isGridView() ? Icons.grid_view : Icons.view_list,
               ),
@@ -129,6 +101,15 @@ class _RadioChannelesScreenState extends State<RadioChannelesScreen> {
                 setState(() {
                   toggleViewType();
                 });
+              }),
+          IconButton(
+              icon: Hero(
+                tag: 'search-icon',
+                child: Icon(Icons.search),
+              ),
+              onPressed: () {
+                // Navigator.of(context).pushNamed(SearchScreen.routeName);
+                //  showSearch(context: context, delegate:SearchDelegate().showResults(context));
               }),
           PopupMenuButton(
             icon: Icon(Icons.language),
@@ -148,7 +129,9 @@ class _RadioChannelesScreenState extends State<RadioChannelesScreen> {
               setState(() {
                 _isLoading = true;
               });
-              _currentCountry = value;
+              setState(() {
+                _currentCountry = value;
+              });
               await Provider.of<ChannelsProvider>(context, listen: false)
                   .updateChannels(_currentCountry);
               setState(() {
@@ -158,34 +141,12 @@ class _RadioChannelesScreenState extends State<RadioChannelesScreen> {
           ),
         ],
       ),
-      drawer: RadioDrawer(),
+      drawer: AppDrawer(),
       body: _isLoading
           ? SpinKitDoubleBounce(color: Colors.teal)
           : isGridView()
-              ? GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 3 / 2,
-                  ),
-                  itemCount: _channels.length,
-                  itemBuilder: (BuildContext ctx, int index) =>
-                      ChannelGridViewItem(
-                    channelName: _channels[index].name,
-                    imageURL: _channels[index].imageUrl,
-                    url: _channels[index].url,
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: _channels.length,
-                  itemBuilder: (BuildContext ctx, int index) =>
-                      ChannelListViewItem(
-                    channelName: _channels[index].name,
-                    imageURL: _channels[index].imageUrl,
-                    url: _channels[index].url,
-                  ),
-                ),
+              ? ChannelsGridView(channels: _channels)
+              : ChannelsListView(channels: _channels),
       bottomNavigationBar: RadioChannelsBottomNavigatorBar(),
     );
   }

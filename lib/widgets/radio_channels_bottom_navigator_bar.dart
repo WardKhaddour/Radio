@@ -9,9 +9,7 @@ class RadioChannelsBottomNavigatorBar extends StatelessWidget {
           label: 'All',
           icon: IconButton(
             icon: Icon(Icons.all_out),
-            onPressed: () {
-              //TODO: toggle to All
-            },
+            onPressed: () {},
           ),
         ),
         BottomNavigationBarItem(

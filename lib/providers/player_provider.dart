@@ -23,6 +23,11 @@ class PlayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setPath(String path) async {
+    await _audioPlayer.setFilePath(path);
+    play();
+  }
+
   Future<void> setURL(String url) async {
     await pause();
     await _audioPlayer.setUrl(url);

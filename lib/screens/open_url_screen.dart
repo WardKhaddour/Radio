@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-import '../widgets/radio_drawer.dart';
+import '../widgets/app_drawer.dart';
 import '../providers/player_provider.dart';
 
 class OpenURLScreen extends StatefulWidget {
@@ -48,7 +48,7 @@ class _OpenURLScreenState extends State<OpenURLScreen> {
                   }),
         ],
       ),
-      drawer: RadioDrawer(),
+      drawer: AppDrawer(),
       body: Center(
         child: _isPlaying
             ? SpinKitChasingDots(color: Colors.red)

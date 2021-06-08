@@ -6,9 +6,10 @@ class DrawerItem extends StatelessWidget {
   DrawerItem({@required this.label, @required this.onPress});
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return Padding( padding:EdgeInsets.all(8),child:TextButton(
       onPressed: onPress,
-      child: Text(label),
+      child: Text(label,style:TextStyle(fontSize:16,),),
+    ),
     );
   }
 }

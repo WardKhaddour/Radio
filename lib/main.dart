@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import './providers/music_provider.dart';
 import './providers/channels_provider.dart';
 import './providers/countries_provider.dart';
 import './providers/player_provider.dart';
+import './providers/check_internet_provider.dart';
+import './screens/search_screen.dart';
 import './screens/player.dart';
 import './screens/open_url_screen.dart';
 import './screens/music_screen.dart';
@@ -22,6 +25,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: CountriesProvider()),
         ChangeNotifierProvider.value(value: ChannelsProvider()),
         ChangeNotifierProvider.value(value: PlayerProvider()),
+        ChangeNotifierProvider.value(value: MusicProvider()),
+        ChangeNotifierProvider.value(value: CheckInternet())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -47,6 +52,7 @@ class MyApp extends StatelessWidget {
           MusicScreen.routeName: (ctx) => MusicScreen(),
           OpenURLScreen.routeName: (ctx) => OpenURLScreen(),
           Player.routeName: (ctx) => Player(),
+          SearchScreen.routeName: (ctx) => SearchScreen(),
         },
       ),
     );
