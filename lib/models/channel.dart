@@ -28,4 +28,10 @@ class Channel {
     final pref = await SharedPreferences.getInstance();
     pref.setBool(id + 'deleted', isDeleted);
   }
+
+  void restoreChannel() async {
+    isDeleted = false;
+    final pref = await SharedPreferences.getInstance();
+    pref.setBool(id + 'deleted', isDeleted);
+  }
 }

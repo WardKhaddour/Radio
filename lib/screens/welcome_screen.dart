@@ -1,10 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/check_internet_provider.dart';
-import '../providers/countries_provider.dart';
 import '../constatnts.dart';
-import './music_screen.dart';
+import '../widgets/no_internet_dialog.dart';
 import './radio_channels_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -15,35 +14,24 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  bool loaded = false;
-
+  bool _loaded = false;
   @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    await Provider.of<CheckInternet>(context).getConnectionStatus();
-    if (CheckInternet().isConnected) {
-      print('connectedddd');
-      await Provider.of<CountriesProvider>(context, listen: false)
-          .updateCountries();
-      loaded = true;
-      Navigator.of(context)
-          .pushReplacementNamed(RadioChannelesScreen.routeName);
-    } else {
-      showDialog(
-        context: context,
-        builder: (ctx) => Container(
-          child: NoInternetDialog(context),
-        ),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    if (!mounted) {
-      CheckInternet().dispose();
-    }
-    super.dispose();
+  void initState() {
+    Future.delayed(Duration(seconds: 3)).then((value) async {
+      await Provider.of<CheckInternet>(context, listen: false)
+          .getConnectionStatus();
+      if (CheckInternet().isConnected) {
+        _loaded = true;
+        Navigator.of(context)
+            .pushReplacementNamed(RadioChannelsScreen.routeName);
+      } else {
+        showDialog(
+          context: context,
+          builder: (ctx) => NoInternetDialog(context: context),
+        );
+      }
+    });
+    super.initState();
   }
 
   @override
@@ -77,60 +65,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ],
             ),
           ),
-          if (!loaded)
+          if (!_loaded)
             LinearProgressIndicator(
               backgroundColor: Colors.teal,
             ),
         ],
       ),
-    );
-  }
-}
-
-class NoInternetDialog extends StatelessWidget {
-  final BuildContext context;
-  NoInternetDialog(this.context);
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'You Are Not Connected To Internet',
-          style: TextStyle(
-            color: Colors.teal,
-            fontSize: 24,
-          ),
-        ),
-        Image.asset(noSignal),
-        Row(
-          children: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacementNamed(
-                  MusicScreen.routeName,
-                );
-              },
-              child: Text(
-                'Play Music',
-                style: TextStyle(
-                  color: Colors.teal,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                SystemNavigator.pop();
-              },
-              child: Text(
-                'Close',
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            ),
-          ],
-        )
-      ],
     );
   }
 }

@@ -19,7 +19,7 @@ class _MusicScreenState extends State<MusicScreen> {
   @override
   void initState() {
     Future.delayed(Duration(seconds: 0)).then((value) async {
-      _files = await Provider.of<MusicProvider>(context).files;
+      _files = await Provider.of<MusicProvider>(context, listen: false).files;
     });
     super.initState();
   }

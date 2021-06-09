@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 import './drawer_item.dart';
 import '../constatnts.dart';
 import '../screens/music_screen.dart';
 import '../screens/open_url_screen.dart';
 import '../screens/radio_channels_screen.dart';
+import '../screens/recycle_bin.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -16,11 +17,6 @@ class AppDrawer extends StatelessWidget {
           children: [
             Column(
               children: [
-                // Container(
-                //   height: 55,
-                //   width: double.infinity,
-                //   color: Colors.teal,
-                // ),
                 AppBar(
                   automaticallyImplyLeading: false,
                 ),
@@ -28,7 +24,7 @@ class AppDrawer extends StatelessWidget {
                   label: 'Radio Channels',
                   onPress: () {
                     Navigator.of(context)
-                        .pushNamed(RadioChannelesScreen.routeName);
+                        .pushNamed(RadioChannelsScreen.routeName);
                   },
                 ),
                 Divider(),
@@ -45,17 +41,25 @@ class AppDrawer extends StatelessWidget {
                     Navigator.of(context).pushNamed(OpenURLScreen.routeName);
                   },
                 ),
+                Divider(),
+                DrawerItem(
+                    label: 'Recycle Bin',
+                    onPress: () {
+                      Navigator.of(context).pushNamed(RecycleBin.routeName);
+                    })
               ],
             ),
             GestureDetector(
-              onTap: () async {
-                const url = 'https://www.tasqment.com/';
-                if (await canLaunch(url)) {
-                  await launch(url);
-                } else {
-                  throw 'Could Not Lunch $url';
-                }
-              },
+              // onTap: () async {
+              //   print("pressed");
+              //   const url = 'https://www.tasqment.com/';
+              //   if (await canLaunch(url)) {
+              //     await launch(url);
+              //   } else {
+              //     print('failed to launch url');
+              //     throw 'Could Not Lunch $url';
+              //   }
+              // },
               child: Container(
                 child: Image.asset(logo),
               ),

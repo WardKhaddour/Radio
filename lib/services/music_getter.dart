@@ -15,11 +15,11 @@ class MusicGetter {
       return [];
     }
     List<StorageInfo> storageInfo = await PathProviderEx.getStorageInfo();
-    String root = storageInfo[1].rootDir;
+    String root = storageInfo[0].rootDir;
     FileManager fm = FileManager(root: Directory(root));
 
     files = await fm.filesTree(
-      excludedPaths: ["/storage/1"],
+      excludedPaths: ["/storage/0"],
       extensions: ["mp3", 'wav', 'aac'],
     );
     print(files);

@@ -4,8 +4,7 @@ import '../services/channels_getter.dart';
 
 class ChannelsProvider with ChangeNotifier {
   List<Channel> _channels = [];
-  List<Channel> _searchResut = [];
-  bool _onlyFav = false;
+  bool onlyFav = false;
   //Methods
   Future<void> updateChannels(String countryName) async {
     _channels = await ChannelsGetter().getChannels(countryName);
@@ -14,40 +13,41 @@ class ChannelsProvider with ChangeNotifier {
   }
 
   List<Channel> get channels {
-    List<Channel> temp = [];
-    if (!_onlyFav) {
-      _channels.forEach((element) {
-        if (!element.isDeleted) {
-          temp.add(element);
-        }
-      });
-    } else {
-      _channels.forEach((element) {
-        if (element.isFavourite && !element.isDeleted) temp.add(element);
-      });
-    }
-    return temp;
+    return _channels.where((element) => !element.isDeleted).toList();
   }
 
-  List<Channel> searchChannel(String channelName) {
+  List<Channel> get favoriteChannels {
+    return _channels
+        .where((element) => element.isFavourite && !element.isDeleted)
+        .toList();
+  }
+
+  List<Channel> get deletedChannels {
+    return _channels.where((element) => element.isDeleted).toList();
+  }
+
+  List<Channel> searchResult(String channelName) {
+    final temp = <Channel>[];
+    if (channelName.isEmpty) {
+      return [];
+    }
     _channels.forEach(
       (element) {
         if (element.name.toLowerCase().contains(channelName.toLowerCase())) {
-          _searchResut.add(element);
+          temp.add(element);
         }
       },
     );
-    notifyListeners();
-    return [..._searchResut];
+    return temp;
   }
 
   void showFav() {
-    _onlyFav = true;
+    onlyFav = true;
     notifyListeners();
   }
 
   void showAll() {
-    _onlyFav = false;
+    onlyFav = false;
     notifyListeners();
   }
 
@@ -60,6 +60,13 @@ class ChannelsProvider with ChangeNotifier {
 
   void deleteChannel(String channelId) {
     _channels.firstWhere((channel) => channel.id == channelId).deleteChannel();
+
+    notifyListeners();
+  }
+
+  void restoreChannel(String channelId) {
+    _channels.firstWhere((channel) => channel.id == channelId).restoreChannel();
+
     notifyListeners();
   }
 }

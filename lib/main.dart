@@ -5,7 +5,8 @@ import './providers/channels_provider.dart';
 import './providers/countries_provider.dart';
 import './providers/player_provider.dart';
 import './providers/check_internet_provider.dart';
-import './screens/search_screen.dart';
+// import './screens/search_screen.dart';
+import './screens/recycle_bin.dart';
 import './screens/player.dart';
 import './screens/open_url_screen.dart';
 import './screens/music_screen.dart';
@@ -48,11 +49,12 @@ class MyApp extends StatelessWidget {
         initialRoute: WelcomeScreen.routeName,
         routes: {
           WelcomeScreen.routeName: (ctx) => WelcomeScreen(),
-          RadioChannelesScreen.routeName: (ctx) => RadioChannelesScreen(),
+          RadioChannelsScreen.routeName: (ctx) => RadioChannelsScreen(),
           MusicScreen.routeName: (ctx) => MusicScreen(),
           OpenURLScreen.routeName: (ctx) => OpenURLScreen(),
           Player.routeName: (ctx) => Player(),
-          SearchScreen.routeName: (ctx) => SearchScreen(),
+          // SearchScreen.routeName: (ctx) => SearchScreen(),
+          RecycleBin.routeName: (ctx) => RecycleBin(),
         },
       ),
     );

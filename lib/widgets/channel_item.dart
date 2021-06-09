@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:radio/providers/channels_provider.dart';
+import '../providers/channels_provider.dart';
 import '../models/channel.dart';
 import '../constatnts.dart';
 import '../providers/player_provider.dart';
@@ -63,10 +63,24 @@ class ChannelGridViewItem extends StatelessWidget {
           ),
           leading: IconButton(
               icon: Icon(Icons.favorite,
-                  color: channel.isFavourite ? Colors.red : Colors.white),
+                  color: channel.isFavourite ? Colors.redAccent : Colors.white),
               onPressed: () {
                 Provider.of<ChannelsProvider>(context, listen: false)
                     .toggleFavorite(channel.id);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    channel.isFavourite
+                        ? 'Removed From Favorites'
+                        : 'Added To Favorites',
+                    textAlign: TextAlign.center,
+                  ),
+                  backgroundColor: Colors.grey,
+                  margin: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                ));
               }),
           trailing: IconButton(
             icon: Icon(
@@ -74,8 +88,34 @@ class ChannelGridViewItem extends StatelessWidget {
               color: Colors.white,
             ),
             onPressed: () {
-              Provider.of<ChannelsProvider>(context, listen: false)
-                  .deleteChannel(channel.id);
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Delete Channel?'),
+                  titlePadding: EdgeInsets.all(16),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Provider.of<ChannelsProvider>(context, listen: false)
+                            .deleteChannel(channel.id);
+                      },
+                      child: Text(
+                        'YES',
+                        style: TextStyle(color: Colors.teal),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'NO',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ],
+                ),
+              );
             },
           ),
         ),
@@ -143,18 +183,61 @@ class ChannelListViewItem extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.favorite,
-                color: channel.isFavourite ? Colors.red : Colors.grey,
+                color: channel.isFavourite ? Colors.redAccent : Colors.white,
               ),
               onPressed: () {
                 Provider.of<ChannelsProvider>(context, listen: false)
                     .toggleFavorite(channel.id);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    channel.isFavourite
+                        ? 'Removed From Favorites'
+                        : 'Added To Favorites',
+                    textAlign: TextAlign.center,
+                  ),
+                  backgroundColor: Colors.grey,
+                  margin: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                ));
               },
             ),
             IconButton(
-              icon: Icon(Icons.delete),
+              icon: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
               onPressed: () {
-                Provider.of<ChannelsProvider>(context, listen: false)
-                    .deleteChannel(channel.id);
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Delete Channel?'),
+                    titlePadding: EdgeInsets.all(16),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Provider.of<ChannelsProvider>(context, listen: false)
+                              .deleteChannel(channel.id);
+                        },
+                        child: Text(
+                          'YES',
+                          style: TextStyle(color: Colors.teal),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'NO',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
           ],

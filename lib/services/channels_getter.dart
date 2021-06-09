@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:radio/models/channel.dart';
+import '../models/channel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChannelsGetter {
@@ -18,8 +18,8 @@ class ChannelsGetter {
         url: channel['url'],
         imageUrl: channel['favicon'],
         id: channel['changeuuid'],
-        isDeleted: pref.getBool(channel['changeuuid'] + 'deleted'),
-        isFavourite: pref.getBool(channel['changeuuid' + 'favorite']),
+        isDeleted: pref.getBool(channel['changeuuid'] + 'deleted') ?? false,
+        isFavourite: pref.getBool(channel['changeuuid'] + 'favorite') ?? false,
       ));
     });
 
