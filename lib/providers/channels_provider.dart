@@ -27,18 +27,15 @@ class ChannelsProvider with ChangeNotifier {
   }
 
   List<Channel> searchResult(String channelName) {
-    final temp = <Channel>[];
+    // final temp = <Channel>[];
+    print('channel name $channelName');
     if (channelName.isEmpty) {
       return [];
     }
-    _channels.forEach(
-      (element) {
-        if (element.name.toLowerCase().contains(channelName.toLowerCase())) {
-          temp.add(element);
-        }
-      },
-    );
-    return temp;
+    return _channels
+        .where((element) =>
+            (element.name.toLowerCase().contains(channelName.toLowerCase())))
+        .toList();
   }
 
   void showFav() {

@@ -12,9 +12,9 @@ class ScrollingText extends StatelessWidget {
       style: textStyle,
       // pauseAfterRound: Duration(milliseconds: 300),
       startPadding: 10.0,
-      accelerationDuration: Duration(milliseconds: 1),
+      accelerationDuration: Duration(milliseconds: 5),
       accelerationCurve: Curves.easeInOut,
-      decelerationDuration: Duration(milliseconds: 1),
+      decelerationDuration: Duration(milliseconds: 5),
       decelerationCurve: Curves.easeOut,
     );
   }

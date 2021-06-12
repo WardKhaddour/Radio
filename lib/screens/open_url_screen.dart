@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:provider/provider.dart';
+import 'package:radio/services/player.dart';
 import '../widgets/app_drawer.dart';
-import '../providers/player_provider.dart';
 
 class OpenURLScreen extends StatefulWidget {
   static const routeName = '/open-url';
@@ -12,41 +11,31 @@ class OpenURLScreen extends StatefulWidget {
 }
 
 class _OpenURLScreenState extends State<OpenURLScreen> {
-  PlayerProvider prov;
   bool _isLoading = false;
   bool _isPlaying = false;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    prov = Provider.of<PlayerProvider>(context);
-  }
 
-  String url;
-  Future<void> openURL() async {
-    await prov.setURL(url);
-    await prov.play();
-  }
+  String _url;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Open URL'),
-        actions: [
-          prov.isPlaying()
-              ? IconButton(
-                  icon: Icon(Icons.pause),
-                  onPressed: () async {
-                    await Provider.of<PlayerProvider>(context, listen: false)
-                        .pause();
-                  })
-              : IconButton(
-                  icon: Icon(Icons.play_arrow),
-                  onPressed: () async {
-                    await Provider.of<PlayerProvider>(context, listen: false)
-                        .play();
-                  }),
-        ],
+        // actions: [
+        //   prov.isPlaying()
+        //       ? IconButton(
+        //           icon: Icon(Icons.pause),
+        //           onPressed: () async {
+        //             await Provider.of<PlayerProvider>(context, listen: false)
+        //                 .pause();
+        //           })
+        //       : IconButton(
+        //           icon: Icon(Icons.play_arrow),
+        //           onPressed: () async {
+        //             await Provider.of<PlayerProvider>(context, listen: false)
+        //                 .play();
+        //           }),
+        // ],
       ),
       drawer: AppDrawer(),
       body: Center(
@@ -77,14 +66,14 @@ class _OpenURLScreenState extends State<OpenURLScreen> {
                               ),
                               onChanged: (value) {
                                 setState(() {
-                                  url = value;
+                                  _url = value;
                                 });
                               },
                               onFieldSubmitted: (value) async {
                                 setState(() {
                                   _isLoading = true;
                                 });
-                                await openURL();
+                                await Player.playFromUrl(_url);
                                 setState(() {
                                   _isLoading = false;
                                   _isPlaying = true;
@@ -99,8 +88,8 @@ class _OpenURLScreenState extends State<OpenURLScreen> {
                                 Icons.search,
                                 color: Colors.teal,
                               ),
-                              onPressed: () {
-                                openURL();
+                              onPressed: () async {
+                                await Player.playFromUrl(_url);
                               },
                             ),
                           ),

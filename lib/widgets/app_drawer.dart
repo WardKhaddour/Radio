@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
 import './drawer_item.dart';
 import '../constatnts.dart';
 import '../screens/music_screen.dart';
@@ -50,16 +50,16 @@ class AppDrawer extends StatelessWidget {
               ],
             ),
             GestureDetector(
-              // onTap: () async {
-              //   print("pressed");
-              //   const url = 'https://www.tasqment.com/';
-              //   if (await canLaunch(url)) {
-              //     await launch(url);
-              //   } else {
-              //     print('failed to launch url');
-              //     throw 'Could Not Lunch $url';
-              //   }
-              // },
+              onTap: () async {
+                print("pressed");
+                const url = 'https://www.tasqment.com/';
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  print('failed to launch url');
+                  throw 'Could Not Lunch $url';
+                }
+              },
               child: Container(
                 child: Image.asset(logo),
               ),

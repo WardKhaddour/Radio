@@ -1,248 +1,73 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/channels_provider.dart';
+import 'package:radio/providers/player_provider.dart';
+import '../screens/radio_channels_screen.dart';
+import '../services/player.dart';
 import '../models/channel.dart';
-import '../constatnts.dart';
-import '../providers/player_provider.dart';
 import './scrolling_text.dart';
+import './channel_info_dialog.dart';
+import './channel_image.dart';
+import './delete_icon.dart';
+import './favorite_icon.dart';
 
-class ChannelGridViewItem extends StatelessWidget {
+class ChannelItem extends StatefulWidget {
   final Channel channel;
-  ChannelGridViewItem({
+  final String viewType;
+  ChannelItem({
     @required this.channel,
+    @required this.viewType,
   });
+
   @override
-  Widget build(BuildContext context) {
-    final prov = Provider.of<PlayerProvider>(context, listen: false);
-    return GestureDetector(
-      onTap: () {
-        prov.setURL(channel.url);
-        prov.setCurrentChannel(channel.name);
-        prov.isPlaying() ? prov.pause() : prov.play();
-      },
-      onLongPress: () {
-        showDialog(
-          context: context,
-          builder: (ctx) => GridTile(
-            child: Hero(
-              tag: 'channel-grid-logo',
-              child: FadeInImage(
-                placeholder: AssetImage(radioImage),
-                image: NetworkImage(
-                  channel.imageUrl,
-                ),
-              ),
-            ),
-            footer: GridTileBar(
-              backgroundColor: Colors.teal,
-              title: Center(
-                child: Text(
-                  channel.name,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      child: GridTile(
-        child: Hero(
-          tag: 'channel-grid-logo',
-          child: FadeInImage(
-            placeholder: AssetImage(radioImage),
-            image: NetworkImage(
-              channel.imageUrl,
-            ),
-          ),
-        ),
-        footer: GridTileBar(
-          backgroundColor: Colors.teal,
-          title: ScrollingText(
-            text: channel.name,
-            textStyle: TextStyle(fontSize: 15),
-          ),
-          leading: IconButton(
-              icon: Icon(Icons.favorite,
-                  color: channel.isFavourite ? Colors.redAccent : Colors.white),
-              onPressed: () {
-                Provider.of<ChannelsProvider>(context, listen: false)
-                    .toggleFavorite(channel.id);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    channel.isFavourite
-                        ? 'Removed From Favorites'
-                        : 'Added To Favorites',
-                    textAlign: TextAlign.center,
-                  ),
-                  backgroundColor: Colors.grey,
-                  margin: EdgeInsets.all(8),
-                  padding: EdgeInsets.all(8),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ));
-              }),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.delete,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Delete Channel?'),
-                  titlePadding: EdgeInsets.all(16),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Provider.of<ChannelsProvider>(context, listen: false)
-                            .deleteChannel(channel.id);
-                      },
-                      child: Text(
-                        'YES',
-                        style: TextStyle(color: Colors.teal),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        'NO',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
+  _ChannelItemState createState() => _ChannelItemState();
 }
 
-class ChannelListViewItem extends StatelessWidget {
-  final Channel channel;
-  ChannelListViewItem({
-    @required this.channel,
-  });
-
+class _ChannelItemState extends State<ChannelItem> {
   @override
   Widget build(BuildContext context) {
-    final prov = Provider.of<PlayerProvider>(context, listen: false);
     return GestureDetector(
-      onTap: () {
-        prov.setURL(channel.url);
-        prov.setCurrentChannel(channel.name);
-        prov.isPlaying() ? prov.pause() : prov.play();
+      onTap: () async {
+        Provider.of<PlayerProvider>(context, listen: false)
+            .setCurrentChannel(widget.channel.name);
+        await Player.playFromUrl(widget.channel.url);
       },
       onLongPress: () {
         showDialog(
           context: context,
-          builder: (ctx) => GridTile(
-            child: Hero(
-              tag: 'channel-tile-logo',
-              child: FadeInImage(
-                placeholder: AssetImage(radioImage),
-                image: NetworkImage(
-                  channel.imageUrl,
-                ),
-              ),
-            ),
-            footer: GridTileBar(
-              backgroundColor: Colors.teal,
-              title: Center(
-                child: Text(
-                  channel.name,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            ),
-          ),
+          builder: (ctx) => ChannelInfoDialog(channel: widget.channel),
         );
       },
-      child: ListTile(
-        leading: Hero(
-          tag: 'channel-tile-logo',
-          child: FadeInImage(
-            placeholder: AssetImage(radioImage),
-            image: NetworkImage(channel.imageUrl),
-          ),
-        ),
-        title: Text(
-          channel.name,
-          style: TextStyle(fontSize: 15),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              icon: Icon(
-                Icons.favorite,
-                color: channel.isFavourite ? Colors.redAccent : Colors.white,
+      child: widget.viewType == describeEnum(view.Grid)
+          ? GridTile(
+              child: ChannelImage(widget: widget),
+              footer: GridTileBar(
+                backgroundColor: Colors.teal,
+                title: ScrollingText(
+                  text: widget.channel.name,
+                  textStyle: TextStyle(fontSize: 15),
+                ),
+                leading: FavoriteIcon(context, widget),
+                trailing: DeleteIcon(context, widget),
               ),
-              onPressed: () {
-                Provider.of<ChannelsProvider>(context, listen: false)
-                    .toggleFavorite(channel.id);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    channel.isFavourite
-                        ? 'Removed From Favorites'
-                        : 'Added To Favorites',
-                    textAlign: TextAlign.center,
-                  ),
-                  backgroundColor: Colors.grey,
-                  margin: EdgeInsets.all(8),
-                  padding: EdgeInsets.all(8),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ));
-              },
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.delete,
-                color: Colors.white,
+            )
+          : ListTile(
+              leading: ChannelImage(
+                widget: widget,
               ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('Delete Channel?'),
-                    titlePadding: EdgeInsets.all(16),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Provider.of<ChannelsProvider>(context, listen: false)
-                              .deleteChannel(channel.id);
-                        },
-                        child: Text(
-                          'YES',
-                          style: TextStyle(color: Colors.teal),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          'NO',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+              title: Text(
+                widget.channel.name,
+                style: TextStyle(fontSize: 15),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FavoriteIcon(context, widget),
+                  DeleteIcon(context, widget),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

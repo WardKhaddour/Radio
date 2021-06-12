@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../services/background_audio_player.dart';
 import '../providers/check_internet_provider.dart';
 import '../constatnts.dart';
 import '../widgets/no_internet_dialog.dart';
@@ -18,20 +20,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     Future.delayed(Duration(seconds: 3)).then((value) async {
+      await initAudioService();
       await Provider.of<CheckInternet>(context, listen: false)
           .getConnectionStatus();
       if (CheckInternet().isConnected) {
         _loaded = true;
+        print('conneted');
         Navigator.of(context)
             .pushReplacementNamed(RadioChannelsScreen.routeName);
       } else {
         showDialog(
           context: context,
-          builder: (ctx) => NoInternetDialog(context: context),
+          builder: (ctx) => NoInternetDialog(),
         );
       }
     });
     super.initState();
+  }
+
+  // initAudioService() async {
+  //   await AudioService.connect();
+  // }
+
+  @override
+  void dispose() {
+    AudioService.disconnect();
+    super.dispose();
   }
 
   @override

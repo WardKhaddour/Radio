@@ -2,8 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import '../services/player.dart';
 import '../providers/music_provider.dart';
-import '../providers/player_provider.dart';
+// import '../providers/player_provider.dart';
 import '../widgets/app_drawer.dart';
 
 class MusicScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _MusicScreenState extends State<MusicScreen> {
   void initState() {
     Future.delayed(Duration(seconds: 0)).then((value) async {
       _files = await Provider.of<MusicProvider>(context, listen: false).files;
+      print('files $_files');
     });
     super.initState();
   }
@@ -71,8 +73,7 @@ class _MusicScreenState extends State<MusicScreen> {
                     color: Colors.teal,
                   ),
                   onTap: () {
-                    Provider.of<PlayerProvider>(context, listen: false)
-                        .setPath(_files[index].path);
+                    Player.playFromStorage(_files[index].path);
                   },
                 ));
               },

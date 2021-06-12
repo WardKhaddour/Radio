@@ -1,7 +1,9 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:radio/services/player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/player_provider.dart';
 import '../models/channel.dart';
@@ -30,7 +32,10 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
   bool _activeSearch = false;
   List<String> _countries = [];
   List<Channel> _channels = [];
-  String _searchName;
+  List<Channel> _searchResult = [];
+  String _searchName = ' ';
+  bool playing = false;
+
   TextEditingController _controller = TextEditingController();
   @override
   void dispose() {
@@ -75,14 +80,36 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
         _isLoading = false;
       });
     });
+
+    isPlaying();
+
     super.initState();
+  }
+
+  void isPlaying() {
+    AudioService.playbackStateStream.listen((PlaybackState state) {
+      setState(() {
+        playing = state.playing;
+      });
+      print('state playing $playing}');
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    _channels = Provider.of<ChannelsProvider>(context, listen: false).channels;
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    _channels = Provider.of<ChannelsProvider>(context).onlyFav
-        ? Provider.of<ChannelsProvider>(context).favoriteChannels
-        : Provider.of<ChannelsProvider>(context).channels;
+    final prov = Provider.of<ChannelsProvider>(context);
+
+    if (_searchResult.isNotEmpty || _activeSearch)
+      _channels = _searchResult;
+    else
+      _channels = prov.onlyFav ? prov.favoriteChannels : prov.channels;
+    print('all channels $_channels');
     return Scaffold(
       appBar: AppBar(
         title: _activeSearch
@@ -95,112 +122,101 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
                     autofocus: true,
                     onChanged: (value) {
                       _searchName = value;
-                    },
-                    onSubmitted: (value) {
-                      _channels =
-                          Provider.of<ChannelsProvider>(context, listen: false)
-                              .searchResult(_searchName);
-                      print(
-                          'finish searching channels ${_channels.toString()}');
+                      setState(() {
+                        _searchResult = prov.searchResult(_searchName);
+                      });
                     },
                     textInputAction: TextInputAction.search,
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                        hintText: 'Input Channel Name',
-                        hintStyle: TextStyle(color: Colors.grey),
-                        // focusColor: Colors.white,
-                        // fillColor: Colors.white,
-
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                          color: Colors.white,
-                        ))),
+                      hintText: 'Input Channel Name',
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
                   ),
                 ),
               )
-            : Text('Channels'),
-        actions: _activeSearch
-            ? []
-            : [
-                Provider.of<PlayerProvider>(context).isPlaying()
-                    ? IconButton(
-                        icon: Icon(Icons.pause),
-                        onPressed: () async {
-                          await Provider.of<PlayerProvider>(context,
-                                  listen: false)
-                              .pause();
-                        })
-                    : IconButton(
-                        icon: Icon(Icons.play_arrow),
-                        onPressed: () async {
-                          await Provider.of<PlayerProvider>(context,
-                                  listen: false)
-                              .play();
-                        }),
-                IconButton(
-                    icon: Icon(
-                      isGridView() ? Icons.grid_view : Icons.view_list,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        toggleViewType();
-                      });
+            : Text(
+                Provider.of<PlayerProvider>(context).currentChannel == null
+                    ? 'Channels'
+                    : Provider.of<PlayerProvider>(context).currentChannel,
+              ),
+        actions: [
+          if (!_activeSearch)
+            playing
+                ? IconButton(
+                    icon: Icon(Icons.pause),
+                    onPressed: () async {
+                      Player.playFromUrl('');
+                    })
+                : IconButton(
+                    icon: Icon(Icons.play_arrow),
+                    onPressed: () async {
+                      Player.playFromUrl('');
                     }),
-                IconButton(
-                    icon: Hero(
-                      tag: 'search-icon',
-                      child: Icon(Icons.search),
-                    ),
-                    onPressed: () {
-                      // Navigator.of(context).pushNamed(SearchScreen.routeName);
-                      //  showSearch(context: context, delegate:SearchDelegate().showResults(context));
-                      setState(() {
-                        _activeSearch = !_activeSearch;
-                      });
-                    }),
-                PopupMenuButton(
-                  icon: Icon(Icons.language),
-                  itemBuilder: (context) {
-                    return _countries
-                        .map(
-                          (country) => PopupMenuItem(
-                            child: Text(country),
-                            value: country,
-                          ),
-                        )
-                        .toList();
-                  },
-                  onSelected: (value) async {
-                    final pref = await SharedPreferences.getInstance();
-                    pref.setString('country', value);
-                    setState(() {
-                      _isLoading = true;
-                    });
-                    setState(() {
-                      _currentCountry = value;
-                    });
-                    await Provider.of<ChannelsProvider>(context, listen: false)
-                        .updateChannels(_currentCountry);
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  },
+          if (!_activeSearch)
+            IconButton(
+                icon: Icon(
+                  isGridView() ? Icons.grid_view : Icons.view_list,
                 ),
-              ],
+                onPressed: () {
+                  setState(() {
+                    toggleViewType();
+                  });
+                }),
+          IconButton(
+              icon: Hero(
+                tag: 'search-icon',
+                child: Icon(_activeSearch ? Icons.close : Icons.search),
+              ),
+              onPressed: () {
+                setState(() {
+                  _activeSearch = !_activeSearch;
+                  // _searchName='';
+                });
+              }),
+          if (!_activeSearch)
+            PopupMenuButton(
+              icon: Icon(Icons.language),
+              itemBuilder: (context) {
+                return _countries
+                    .map(
+                      (country) => PopupMenuItem(
+                        child: Text(country),
+                        value: country,
+                      ),
+                    )
+                    .toList();
+              },
+              onSelected: (value) async {
+                final pref = await SharedPreferences.getInstance();
+                pref.setString('country', value);
+                setState(() {
+                  _isLoading = true;
+                });
+                setState(() {
+                  _currentCountry = value;
+                });
+                await Provider.of<ChannelsProvider>(context, listen: false)
+                    .updateChannels(_currentCountry);
+                setState(() {
+                  _isLoading = false;
+                });
+              },
+            ),
+        ],
       ),
       drawer: _activeSearch ? SizedBox() : AppDrawer(),
       body: RefreshIndicator(
-        color: Colors.teal,
-        onRefresh: () async {
-          await Provider.of<ChannelsProvider>(context, listen: false)
-              .updateChannels(_currentCountry);
-        },
-        child: _isLoading
-            ? SpinKitDoubleBounce(color: Colors.teal)
-            : isGridView()
-                ? ChannelsGridView(channels: _channels)
-                : ChannelsListView(channels: _channels),
-      ),
+          color: Colors.teal,
+          onRefresh: () async {
+            await Provider.of<ChannelsProvider>(context, listen: false)
+                .updateChannels(_currentCountry);
+          },
+          child: _isLoading
+              ? SpinKitDoubleBounce(color: Colors.teal)
+              : isGridView()
+                  ? ChannelsGridView(channels: _channels)
+                  : ChannelsListView(channels: _channels)),
       bottomNavigationBar: RadioChannelsBottomNavigatorBar(),
     );
   }

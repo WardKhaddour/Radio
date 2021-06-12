@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../widgets/channel_item.dart';
 import '../models/channel.dart';
+import '../screens/radio_channels_screen.dart';
 
 class ChannelsGridView extends StatelessWidget {
   ChannelsGridView({@required this.channels});
@@ -18,8 +20,9 @@ class ChannelsGridView extends StatelessWidget {
         ),
         itemCount: channels.length,
         itemBuilder: (BuildContext ctx, int index) {
-          return ChannelGridViewItem(
+          return ChannelItem(
             channel: channels[index],
+            viewType: describeEnum(view.Grid),
           );
         });
   }
@@ -34,8 +37,9 @@ class ChannelsListView extends StatelessWidget {
     return ListView.builder(
         itemCount: channels.length,
         itemBuilder: (BuildContext ctx, int index) {
-          return ChannelListViewItem(
+          return ChannelItem(
             channel: channels[index],
+            viewType: describeEnum(view.List),
           );
         });
   }

@@ -6,9 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class MusicProvider with ChangeNotifier {
   List<File> _files = [];
-  // List<File> get files {
-  //   return [..._files];
-  // }
+
   List<File> searchFile(String fileName) {
     List<File> temp = [];
     _files.forEach(
@@ -23,17 +21,22 @@ class MusicProvider with ChangeNotifier {
 
   Future<List<File>> get files async {
     final storagePer = await Permission.storage.request();
-    final exStoragePer = await Permission.manageExternalStorage.request();
+    print('permission');
+    // final exStoragePer = await Permission.manageExternalStorage.request();
 
     if (storagePer.isDenied) {
       return [];
     }
-    if (exStoragePer.isDenied) {
-      return [];
-    }
+    // if (exStoragePer.isDenied) {
+    //   return [];
+    // }
 
     List<StorageInfo> storageInfo = await PathProviderEx.getStorageInfo();
+    print('storage inf ${storageInfo.toString()}');
+
     String root = storageInfo[0].rootDir;
+    print('root $root ');
+
     FileManager fm = FileManager(root: Directory(root));
     _files = await fm.filesTree(
       excludedPaths: ["/storage/0"],
