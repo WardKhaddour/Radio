@@ -19,13 +19,17 @@ class MusicProvider with ChangeNotifier {
     return temp;
   }
 
-  Future<List<File>> get files async {
+  List<File> get files {
+    return [..._files];
+  }
+
+  Future<void> getFiles() async {
     final storagePer = await Permission.storage.request();
     print('permission');
     // final exStoragePer = await Permission.manageExternalStorage.request();
 
     if (storagePer.isDenied) {
-      return [];
+      return;
     }
     // if (exStoragePer.isDenied) {
     //   return [];
@@ -42,6 +46,6 @@ class MusicProvider with ChangeNotifier {
       excludedPaths: ["/storage/0"],
       extensions: ["mp3", 'wav', 'aac'],
     );
-    return [..._files];
+    notifyListeners();
   }
 }

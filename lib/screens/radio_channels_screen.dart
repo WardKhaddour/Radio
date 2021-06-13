@@ -34,7 +34,7 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
   List<Channel> _channels = [];
   List<Channel> _searchResult = [];
   String _searchName = ' ';
-  bool playing = false;
+  bool _playing = false;
 
   TextEditingController _controller = TextEditingController();
   @override
@@ -89,15 +89,18 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
   void isPlaying() {
     AudioService.playbackStateStream.listen((PlaybackState state) {
       setState(() {
-        playing = state.playing;
+        _playing = state.playing;
       });
-      print('state playing $playing}');
+      print('state playing $_playing}');
     });
   }
 
   @override
   void didChangeDependencies() {
-    _channels = Provider.of<ChannelsProvider>(context, listen: false).channels;
+    Future.delayed(Duration(seconds: 0)).then((value) async {
+      await Provider.of<ChannelsProvider>(context, listen: false)
+          .updateChannels(_currentCountry);
+    });
     super.didChangeDependencies();
   }
 
@@ -142,7 +145,7 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
               ),
         actions: [
           if (!_activeSearch)
-            playing
+            _playing
                 ? IconButton(
                     icon: Icon(Icons.pause),
                     onPressed: () async {
