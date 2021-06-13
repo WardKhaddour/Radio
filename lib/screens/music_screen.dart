@@ -34,16 +34,17 @@ class _MusicScreenState extends State<MusicScreen> {
       await Provider.of<MusicProvider>(context, listen: false).getFiles();
       _files = Provider.of<MusicProvider>(context, listen: false).files;
     });
+    isPlaying();
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    Future.delayed(Duration(seconds: 0)).then((value) async {
-      await Provider.of<MusicProvider>(context, listen: false).getFiles();
-    });
-    super.didChangeDependencies();
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   Future.delayed(Duration(seconds: 0)).then((value) async {
+  //     await Provider.of<MusicProvider>(context, listen: false).getFiles();
+  //   });
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +60,6 @@ class _MusicScreenState extends State<MusicScreen> {
               )
             : Text('My Music'),
         actions: [
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                setState(() {
-                  _showSearchBar = true;
-                });
-              }),
           _playing
               ? IconButton(
                   icon: Icon(Icons.pause),
