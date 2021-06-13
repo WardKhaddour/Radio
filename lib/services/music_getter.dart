@@ -22,7 +22,6 @@ class MusicGetter {
       excludedPaths: ["/storage/0"],
       extensions: ["mp3", 'wav', 'aac'],
     );
-    print(files);
     return files;
   }
 }

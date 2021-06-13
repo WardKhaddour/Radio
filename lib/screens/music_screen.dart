@@ -24,7 +24,6 @@ class _MusicScreenState extends State<MusicScreen> {
       setState(() {
         _playing = state.playing;
       });
-      print('state playing $_playing}');
     });
   }
 

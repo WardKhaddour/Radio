@@ -25,7 +25,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           .getConnectionStatus();
       if (CheckInternet().isConnected) {
         _loaded = true;
-        print('conneted');
         Navigator.of(context)
             .pushReplacementNamed(RadioChannelsScreen.routeName);
       } else {

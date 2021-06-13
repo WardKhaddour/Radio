@@ -51,12 +51,10 @@ class AppDrawer extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () async {
-                print("pressed");
                 const url = 'https://www.tasqment.com/';
                 if (await canLaunch(url)) {
                   await launch(url);
                 } else {
-                  print('failed to launch url');
                   throw 'Could Not Lunch $url';
                 }
               },

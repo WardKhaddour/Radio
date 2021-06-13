@@ -4,10 +4,13 @@ import '../providers/channels_provider.dart';
 import './channel_item.dart';
 
 class FavoriteIcon extends StatelessWidget {
-  FavoriteIcon(this.context, this.widget);
   final BuildContext context;
-
   final ChannelItem widget;
+  final Color iconColor;
+  FavoriteIcon(
+      {@required this.context,
+      @required this.widget,
+      this.iconColor = Colors.white});
   void favoriteIconPressed() {
     Provider.of<ChannelsProvider>(context, listen: false)
         .toggleFavorite(widget.channel.id);
@@ -33,7 +36,7 @@ class FavoriteIcon extends StatelessWidget {
     return IconButton(
       icon: Icon(
         Icons.favorite,
-        color: widget.channel.isFavourite ? Colors.redAccent : Colors.grey,
+        color: widget.channel.isFavourite ? Colors.redAccent : iconColor,
       ),
       onPressed: favoriteIconPressed,
     );

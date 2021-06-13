@@ -28,7 +28,6 @@ class ChannelsProvider with ChangeNotifier {
 
   List<Channel> searchResult(String channelName) {
     // final temp = <Channel>[];
-    print('channel name $channelName');
     if (channelName.isEmpty) {
       return [];
     }

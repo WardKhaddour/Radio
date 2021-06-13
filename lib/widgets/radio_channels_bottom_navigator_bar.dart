@@ -10,37 +10,34 @@ class RadioChannelsBottomNavigatorBar extends StatefulWidget {
 
 class _RadioChannelsBottomNavigatorBarState
     extends State<RadioChannelsBottomNavigatorBar> {
+  int _index = 0;
+  void chooseType(int index) {
+    if (index == 0) {
+      Provider.of<ChannelsProvider>(context, listen: false).showAll();
+    } else if (index == 1) {
+      Provider.of<ChannelsProvider>(context, listen: false).showFav();
+    }
+    setState(() {
+      _index = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      selectedItemColor: Colors.teal,
-      unselectedItemColor: Colors.grey,
-      // selectedIconTheme: IconThemeData(color: Colors.teal),
+      onTap: chooseType,
+      currentIndex: _index,
       items: [
         BottomNavigationBarItem(
           label: 'All',
-          icon: IconButton(
-            icon: Icon(
-              Icons.all_out_rounded,
-              // color: _fav ? Colors.grey : Colors.teal,
-            ),
-            onPressed: () {
-              Provider.of<ChannelsProvider>(context, listen: false).showAll();
-              // setState(() {});
-            },
+          icon: Icon(
+            Icons.all_out_rounded,
           ),
         ),
         BottomNavigationBarItem(
           label: 'Favorite',
-          icon: IconButton(
-            icon: Icon(
-              Icons.favorite,
-              // color: !_fav ? Colors.grey : Colors.teal,
-            ),
-            onPressed: () {
-              Provider.of<ChannelsProvider>(context, listen: false).showFav();
-              // setState(() {});
-            },
+          icon: Icon(
+            Icons.favorite,
           ),
         ),
       ],

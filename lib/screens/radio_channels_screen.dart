@@ -91,7 +91,6 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
       setState(() {
         playing = state.playing;
       });
-      print('state playing $playing}');
     });
   }
 
@@ -109,7 +108,6 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
       _channels = _searchResult;
     else
       _channels = prov.onlyFav ? prov.favoriteChannels : prov.channels;
-    print('all channels $_channels');
     return Scaffold(
       appBar: AppBar(
         title: _activeSearch

@@ -47,8 +47,16 @@ class _ChannelItemState extends State<ChannelItem> {
                   text: widget.channel.name,
                   textStyle: TextStyle(fontSize: 15),
                 ),
-                leading: FavoriteIcon(context, widget),
-                trailing: DeleteIcon(context, widget),
+                leading: FavoriteIcon(
+                  context: context,
+                  widget: widget,
+                  iconColor: Colors.white,
+                ),
+                trailing: DeleteIcon(
+                  context: context,
+                  widget: widget,
+                  iconColor: Colors.white,
+                ),
               ),
             )
           : ListTile(
@@ -63,8 +71,16 @@ class _ChannelItemState extends State<ChannelItem> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  FavoriteIcon(context, widget),
-                  DeleteIcon(context, widget),
+                  FavoriteIcon(
+                    context: context,
+                    widget: widget,
+                    iconColor: Colors.grey,
+                  ),
+                  DeleteIcon(
+                    context: context,
+                    widget: widget,
+                    iconColor: Colors.grey,
+                  ),
                 ],
               ),
             ),

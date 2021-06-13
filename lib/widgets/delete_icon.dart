@@ -6,7 +6,11 @@ import './channel_item.dart';
 class DeleteIcon extends StatelessWidget {
   final BuildContext context;
   final ChannelItem widget;
-  DeleteIcon(this.context, this.widget);
+  final Color iconColor;
+  DeleteIcon(
+      {@required this.context,
+      @required this.widget,
+      this.iconColor = Colors.white});
   void deleteIconPressed() {
     showDialog(
       context: context,
@@ -57,7 +61,7 @@ class DeleteIcon extends StatelessWidget {
     return IconButton(
       icon: Icon(
         Icons.delete,
-        color: Colors.white,
+        color: iconColor,
       ),
       onPressed: deleteIconPressed,
     );

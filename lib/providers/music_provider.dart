@@ -25,7 +25,6 @@ class MusicProvider with ChangeNotifier {
 
   Future<void> getFiles() async {
     final storagePer = await Permission.storage.request();
-    print('permission');
     // final exStoragePer = await Permission.manageExternalStorage.request();
 
     if (storagePer.isDenied) {
@@ -36,11 +35,7 @@ class MusicProvider with ChangeNotifier {
     // }
 
     List<StorageInfo> storageInfo = await PathProviderEx.getStorageInfo();
-    print('storage inf ${storageInfo.toString()}');
-
     String root = storageInfo[0].rootDir;
-    print('root $root ');
-
     FileManager fm = FileManager(root: Directory(root));
     _files = await fm.filesTree(
       excludedPaths: ["/storage/0"],
