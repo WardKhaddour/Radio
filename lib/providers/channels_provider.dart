@@ -60,6 +60,12 @@ class ChannelsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void restoreAllChannels() {
+    _channels.forEach((element) {
+      restoreChannel(element.id);
+    });
+  }
+
   void restoreChannel(String channelId) {
     _channels.firstWhere((channel) => channel.id == channelId).restoreChannel();
 

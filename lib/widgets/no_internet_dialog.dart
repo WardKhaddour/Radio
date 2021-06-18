@@ -4,20 +4,13 @@ import '../screens/music_screen.dart';
 import '../constatnts.dart';
 
 class NoInternetDialog extends StatelessWidget {
-  // const NoInternetDialog({
-  //   Key key,
-  //   @required this.context,
-  // }) : super(key: key);
-
-  // final BuildContext context;
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
         'You Are Not Connected To Internet',
         style: TextStyle(
-          color: Colors.teal,
+          color: Theme.of(context).primaryColor,
           fontSize: 24,
         ),
       ),
@@ -32,7 +25,7 @@ class NoInternetDialog extends StatelessWidget {
           child: Text(
             'Play Music',
             style: TextStyle(
-              color: Colors.teal,
+              color: Theme.of(context).primaryColor,
             ),
           ),
         ),

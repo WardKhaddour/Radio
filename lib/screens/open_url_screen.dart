@@ -43,7 +43,7 @@ class _OpenURLScreenState extends State<OpenURLScreen> {
             ? SpinKitChasingDots(color: Colors.red)
             : _isLoading
                 ? CircularProgressIndicator(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: Theme.of(context).primaryColor,
                   )
                 : Padding(
                     padding: EdgeInsets.all(8),
@@ -61,7 +61,7 @@ class _OpenURLScreenState extends State<OpenURLScreen> {
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(),
                                 ),
-                                focusColor: Colors.teal,
+                                focusColor: Theme.of(context).primaryColor,
                                 hintText: 'type URL here',
                               ),
                               onChanged: (value) {
@@ -73,7 +73,7 @@ class _OpenURLScreenState extends State<OpenURLScreen> {
                                 setState(() {
                                   _isLoading = true;
                                 });
-                                await Player.playFromUrl(_url);
+                                await Player.play(_url);
                                 setState(() {
                                   _isLoading = false;
                                   _isPlaying = true;
@@ -86,10 +86,10 @@ class _OpenURLScreenState extends State<OpenURLScreen> {
                             child: IconButton(
                               icon: Icon(
                                 Icons.search,
-                                color: Colors.teal,
+                                color: Theme.of(context).primaryColor,
                               ),
                               onPressed: () async {
-                                await Player.playFromUrl(_url);
+                                await Player.play(_url);
                               },
                             ),
                           ),

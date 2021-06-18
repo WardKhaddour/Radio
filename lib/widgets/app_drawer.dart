@@ -12,16 +12,40 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                AppBar(
-                  automaticallyImplyLeading: false,
+          child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            titleSpacing: 400,
+            automaticallyImplyLeading: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                'TasQment',
+                style: TextStyle(
+                    color: Colors.grey.withOpacity(0.7), fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+              background: GestureDetector(
+                onTap: () async {
+                  const url = 'https://www.tasqment.com/';
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    throw 'Could Not Lunch $url';
+                  }
+                },
+                child: Container(
+                  child: Image.asset(logo),
                 ),
+              ),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
                 DrawerItem(
-                  label: 'Radio Channels',
+                  text: 'Radio Channels',
+                  icon: Icons.radio,
                   onPress: () {
                     Navigator.of(context)
                         .pushNamed(RadioChannelsScreen.routeName);
@@ -29,42 +53,35 @@ class AppDrawer extends StatelessWidget {
                 ),
                 Divider(),
                 DrawerItem(
-                  label: 'My Music',
+                  text: 'My Music',
+                  icon: Icons.music_note,
                   onPress: () {
                     Navigator.of(context).pushNamed(MusicScreen.routeName);
                   },
                 ),
                 Divider(),
                 DrawerItem(
-                  label: 'Open URL',
+                  text: 'Open URL',
+                  icon: Icons.web,
                   onPress: () {
                     Navigator.of(context).pushNamed(OpenURLScreen.routeName);
                   },
                 ),
                 Divider(),
                 DrawerItem(
-                    label: 'Recycle Bin',
-                    onPress: () {
-                      Navigator.of(context).pushNamed(RecycleBin.routeName);
-                    })
+                  text: 'Recycle Bin',
+                  icon: Icons.delete,
+                  onPress: () {
+                    Navigator.of(context).pushNamed(RecycleBin.routeName);
+                  },
+                ),
+                Divider(),
+                SizedBox(height: 8000),
               ],
             ),
-            GestureDetector(
-              onTap: () async {
-                const url = 'https://www.tasqment.com/';
-                if (await canLaunch(url)) {
-                  await launch(url);
-                } else {
-                  throw 'Could Not Lunch $url';
-                }
-              },
-              child: Container(
-                child: Image.asset(logo),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        ],
+      )),
     );
   }
 }

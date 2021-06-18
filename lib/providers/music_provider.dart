@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_file_manager/flutter_file_manager.dart';
-import 'package:path_provider_ex/path_provider_ex.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../services/path_getter.dart';
+import '../services/files_getter.dart';
 
 class MusicProvider with ChangeNotifier {
   List<File> _files = [];
-
+  List<Directory> _directory = [];
   List<File> searchFile(String fileName) {
     List<File> temp = [];
     _files.forEach(
@@ -23,24 +23,43 @@ class MusicProvider with ChangeNotifier {
     return [..._files];
   }
 
+  List<Directory> get directory {
+    return [..._directory];
+  }
+
   Future<void> getFiles() async {
+    final filesGetter = FilesGetter();
+    final pathGetter = PathGetter();
+
     final storagePer = await Permission.storage.request();
-    // final exStoragePer = await Permission.manageExternalStorage.request();
+
+    final exStoragePer = await Permission.manageExternalStorage.request();
 
     if (storagePer.isDenied) {
-      return;
+      return [];
     }
-    // if (exStoragePer.isDenied) {
-    //   return [];
-    // }
+    if (exStoragePer.isDenied) {
+      return [];
+    }
+    Directory sdCardDirectory = await pathGetter.getExternalSdCardPath();
+    Directory internalStorageDirectory =
+        await pathGetter.getInternalStoragePath();
+    if (await Permission.storage.request().isGranted) {
+      final sdCardFiles = filesGetter.filterFiles(sdCardDirectory);
+      final internalStorageFiles =
+          filesGetter.filterFiles(internalStorageDirectory);
+      _files = filesGetter.filterSongs(sdCardFiles) +
+          filesGetter.filterSongs(internalStorageFiles);
+      _directory = filesGetter.directory;
+    }
+    notifyListeners();
+  }
 
-    List<StorageInfo> storageInfo = await PathProviderEx.getStorageInfo();
-    String root = storageInfo[0].rootDir;
-    FileManager fm = FileManager(root: Directory(root));
-    _files = await fm.filesTree(
-      excludedPaths: ["/storage/0"],
-      extensions: ["mp3", 'wav', 'aac'],
-    );
+  void getFilesFromDirectory(Directory dir) {
+    final filesGetter = FilesGetter();
+
+    _files = filesGetter.getFilesFromDirectory(dir);
+    print("files ${_files.toString()}");
     notifyListeners();
   }
 }

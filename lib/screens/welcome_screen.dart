@@ -29,6 +29,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             .pushReplacementNamed(RadioChannelsScreen.routeName);
       } else {
         showDialog(
+          barrierDismissible: true,
           context: context,
           builder: (ctx) => NoInternetDialog(),
         );
@@ -36,10 +37,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
     super.initState();
   }
-
-  // initAudioService() async {
-  //   await AudioService.connect();
-  // }
 
   @override
   void dispose() {
@@ -80,7 +77,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
           if (!_loaded)
             LinearProgressIndicator(
-              backgroundColor: Colors.teal,
+              backgroundColor: Theme.of(context).primaryColor,
             ),
         ],
       ),

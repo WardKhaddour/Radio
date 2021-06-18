@@ -1,17 +1,15 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-import 'package:radio/services/player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../providers/player_provider.dart';
 import '../models/channel.dart';
 import '../providers/channels_provider.dart';
-import '../providers/countries_provider.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/radio_channels_bottom_navigator_bar.dart';
 import '../widgets/channels_view.dart';
+import '../widgets/countries_dialog.dart';
+import '../providers/countries_provider.dart';
 
 enum view {
   List,
@@ -30,12 +28,10 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
   String _currentCountry = 'Syrian Arab Republic';
   bool _isLoading = true;
   bool _activeSearch = false;
-  List<String> _countries = [];
   List<Channel> _channels = [];
   List<Channel> _searchResult = [];
   String _searchName = ' ';
-  bool playing = false;
-
+  SharedPreferences _pref;
   TextEditingController _controller = TextEditingController();
   @override
   void dispose() {
@@ -57,22 +53,21 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
   @override
   void initState() {
     Future.delayed(Duration(seconds: 0)).then((value) async {
+      _pref = await SharedPreferences.getInstance();
+
       setState(() {
         _isLoading = true;
       });
-      final pref = await SharedPreferences.getInstance();
       setState(() {
-        _currentCountry = pref.containsKey('country')
-            ? pref.getString('country')
+        _currentCountry = _pref.containsKey('country')
+            ? _pref.getString('country')
             : 'Syrian Arab Republic';
       });
-      await Provider.of<CountriesProvider>(context, listen: false)
-          .updateCountries();
+      print('country name $_currentCountry');
       await Provider.of<ChannelsProvider>(context, listen: false)
           .updateChannels(_currentCountry);
-
-      _countries =
-          Provider.of<CountriesProvider>(context, listen: false).countries;
+      await Provider.of<CountriesProvider>(context, listen: false)
+          .updateCountries();
       _channels =
           Provider.of<ChannelsProvider>(context, listen: false).channels;
 
@@ -81,21 +76,33 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
       });
     });
 
-    isPlaying();
-
     super.initState();
-  }
-
-  void isPlaying() {
-    AudioService.playbackStateStream.listen((PlaybackState state) {
-      setState(() {
-        playing = state.playing;
-      });
-    });
   }
 
   @override
   void didChangeDependencies() {
+    // Future.delayed(Duration(seconds: 0)).then((value) async {
+    //   print('current country $_currentCountry');
+    //   print('args ${ModalRoute.of(context).settings.arguments}');
+    //   if (_currentCountry != ModalRoute.of(context).settings.arguments &&
+    //       ModalRoute.of(context).settings.arguments != null) {
+    //     final pref = await SharedPreferences.getInstance();
+    //     _currentCountry = pref.containsKey('country')
+    //         ? pref.getString('country')
+    //         : 'Syrian Arab Republic';
+    //     setState(() {
+    //       _isLoading = true;
+    //     });
+    //     await Provider.of<ChannelsProvider>(context, listen: false)
+    //         .updateChannels(_currentCountry);
+    //     setState(() {
+    //       _isLoading = false;
+    //     });
+    //   } else {
+    //     return;
+    //   }
+    // });
+
     _channels = Provider.of<ChannelsProvider>(context, listen: false).channels;
     super.didChangeDependencies();
   }
@@ -103,7 +110,11 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
   @override
   Widget build(BuildContext context) {
     final prov = Provider.of<ChannelsProvider>(context);
-
+    setState(() {
+      _currentCountry = _pref.containsKey('country')
+          ? _pref.getString('country')
+          : 'Syrian Arab Republic';
+    });
     if (_searchResult.isNotEmpty || _activeSearch)
       _channels = _searchResult;
     else
@@ -111,46 +122,27 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: _activeSearch
-            ? Hero(
-                tag: 'search-icon',
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _controller,
-                    autofocus: true,
-                    onChanged: (value) {
-                      _searchName = value;
-                      setState(() {
-                        _searchResult = prov.searchResult(_searchName);
-                      });
-                    },
-                    textInputAction: TextInputAction.search,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'Input Channel Name',
-                      hintStyle: TextStyle(color: Colors.grey),
-                    ),
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _controller,
+                  autofocus: true,
+                  onChanged: (value) {
+                    _searchName = value;
+                    setState(() {
+                      _searchResult = prov.searchResult(_searchName);
+                    });
+                  },
+                  textInputAction: TextInputAction.search,
+                  style: TextStyle(color: Theme.of(context).accentColor),
+                  decoration: InputDecoration(
+                    hintText: 'Input Channel Name',
+                    hintStyle: TextStyle(color: Colors.grey),
                   ),
                 ),
               )
-            : Text(
-                Provider.of<PlayerProvider>(context).currentChannel == null
-                    ? 'Channels'
-                    : Provider.of<PlayerProvider>(context).currentChannel,
-              ),
+            : Text('Radio Channels'),
         actions: [
-          if (!_activeSearch)
-            playing
-                ? IconButton(
-                    icon: Icon(Icons.pause),
-                    onPressed: () async {
-                      Player.playFromUrl('');
-                    })
-                : IconButton(
-                    icon: Icon(Icons.play_arrow),
-                    onPressed: () async {
-                      Player.playFromUrl('');
-                    }),
           if (!_activeSearch)
             IconButton(
                 icon: Icon(
@@ -161,60 +153,62 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
                     toggleViewType();
                   });
                 }),
-          IconButton(
-              icon: Hero(
-                tag: 'search-icon',
-                child: Icon(_activeSearch ? Icons.close : Icons.search),
-              ),
-              onPressed: () {
-                setState(() {
-                  _activeSearch = !_activeSearch;
-                  // _searchName='';
-                });
-              }),
           if (!_activeSearch)
             PopupMenuButton(
-              icon: Icon(Icons.language),
               itemBuilder: (context) {
-                return _countries
-                    .map(
-                      (country) => PopupMenuItem(
-                        child: Text(country),
-                        value: country,
-                      ),
-                    )
-                    .toList();
-              },
-              onSelected: (value) async {
-                final pref = await SharedPreferences.getInstance();
-                pref.setString('country', value);
-                setState(() {
-                  _isLoading = true;
-                });
-                setState(() {
-                  _currentCountry = value;
-                });
-                await Provider.of<ChannelsProvider>(context, listen: false)
-                    .updateChannels(_currentCountry);
-                setState(() {
-                  _isLoading = false;
-                });
+                return [
+                  PopupMenuItem(
+                    child: TextButton(
+                      child: Text('Search Channel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          _activeSearch = true;
+                          // _searchName='';
+                        });
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    child: TextButton(
+                      child: Text('Change Country'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        showDialog(
+                          context: context,
+                          builder: (context) => CountriesDialog(),
+                        );
+                      },
+                    ),
+                  ),
+                ];
               },
             ),
+          if (_activeSearch)
+            IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  setState(() {
+                    _activeSearch = false;
+                    // _searchName='';
+                  });
+                }),
         ],
       ),
       drawer: _activeSearch ? SizedBox() : AppDrawer(),
       body: RefreshIndicator(
-          color: Colors.teal,
-          onRefresh: () async {
-            await Provider.of<ChannelsProvider>(context, listen: false)
-                .updateChannels(_currentCountry);
-          },
-          child: _isLoading
-              ? SpinKitDoubleBounce(color: Colors.teal)
-              : isGridView()
-                  ? ChannelsGridView(channels: _channels)
-                  : ChannelsListView(channels: _channels)),
+        color: Theme.of(context).primaryColor,
+        onRefresh: () async {
+          await Provider.of<ChannelsProvider>(context, listen: false)
+              .updateChannels(_currentCountry);
+        },
+        child: Scrollbar(
+            child: _isLoading
+                ? SpinKitDoubleBounce(color: Theme.of(context).primaryColor)
+                : isGridView()
+                    ? ChannelsGridView(channels: _channels)
+                    : ChannelsListView(channels: _channels)),
+      ),
       bottomNavigationBar: RadioChannelsBottomNavigatorBar(),
     );
   }

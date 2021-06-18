@@ -18,6 +18,19 @@ class _RecycleBinState extends State<RecycleBin> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Recycle Bin'),
+        actions: _channels.isEmpty
+            ? []
+            : [
+                PopupMenuButton(
+                  itemBuilder: (context) => [
+                    Text('Restore All'),
+                  ].map((e) => PopupMenuItem(child: e)).toList(),
+                  onSelected: (value) {
+                    Provider.of<ChannelsProvider>(context, listen: false)
+                        .restoreAllChannels();
+                  },
+                ),
+              ],
       ),
       drawer: AppDrawer(),
       body: _channels.isEmpty
@@ -25,7 +38,7 @@ class _RecycleBinState extends State<RecycleBin> {
               child: Text(
                 'No Items',
                 style: TextStyle(
-                  color: Colors.teal,
+                  color: Theme.of(context).primaryColor,
                   fontSize: 16,
                 ),
               ),

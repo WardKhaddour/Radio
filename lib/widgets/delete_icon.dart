@@ -13,6 +13,7 @@ class DeleteIcon extends StatelessWidget {
       this.iconColor = Colors.white});
   void deleteIconPressed() {
     showDialog(
+      barrierDismissible: true,
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Delete Channel?'),
@@ -48,7 +49,7 @@ class DeleteIcon extends StatelessWidget {
             },
             child: Text(
               'YES',
-              style: TextStyle(color: Colors.teal),
+              style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           ),
         ],

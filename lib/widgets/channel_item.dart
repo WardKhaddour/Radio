@@ -30,38 +30,77 @@ class _ChannelItemState extends State<ChannelItem> {
       onTap: () async {
         Provider.of<PlayerProvider>(context, listen: false)
             .setCurrentChannel(widget.channel.name);
-        await Player.playFromUrl(widget.channel.url);
+        await Player.play(widget.channel.url);
       },
       onLongPress: () {
         showDialog(
+          barrierDismissible: true,
           context: context,
           builder: (ctx) => ChannelInfoDialog(channel: widget.channel),
         );
       },
       child: widget.viewType == describeEnum(view.Grid)
-          ? GridTile(
-              child: ChannelImage(widget: widget),
-              footer: GridTileBar(
-                backgroundColor: Colors.teal,
-                title: ScrollingText(
-                  text: widget.channel.name,
-                  textStyle: TextStyle(fontSize: 15),
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: ChannelImage(
+                    widget: widget,
+                    width: 75,
+                    height: 75,
+                  ),
                 ),
-                leading: FavoriteIcon(
-                  context: context,
-                  widget: widget,
-                  iconColor: Colors.white,
+                Expanded(
+                  flex: 1,
+                  child: GridTileBar(
+                    backgroundColor:
+                        Theme.of(context).primaryColor.withOpacity(0.5),
+                    title: ScrollingText(
+                      text: widget.channel.name,
+                      textStyle: TextStyle(fontSize: 15),
+                    ),
+                    leading: FavoriteIcon(
+                      context: context,
+                      widget: widget,
+                      iconColor: Theme.of(context).accentColor,
+                    ),
+                    trailing: DeleteIcon(
+                      context: context,
+                      widget: widget,
+                      iconColor: Theme.of(context).accentColor,
+                    ),
+                  ),
                 ),
-                trailing: DeleteIcon(
-                  context: context,
-                  widget: widget,
-                  iconColor: Colors.white,
-                ),
-              ),
+              ],
             )
+          // ? GridTile(
+          //     child: ChannelImage(widget: widget),
+          //     footer: GridTileBar(
+          //       backgroundColor:
+          //           Theme.of(context).primaryColor.withOpacity(0.5),
+
+          //       title: ScrollingText(
+          //         text: widget.channel.name,
+          //         textStyle: TextStyle(fontSize: 15),
+          //       ),
+          //       leading: FavoriteIcon(
+          //         context: context,
+          //         widget: widget,
+          //         iconColor: Colors.white,
+          //       ),
+          //       trailing: DeleteIcon(
+          //         context: context,
+          //         widget: widget,
+          //         iconColor: Colors.white,
+          //       ),
+          //     ),
+          //   )
           : ListTile(
               leading: ChannelImage(
                 widget: widget,
+                width: 50,
+                height: 50,
               ),
               title: Text(
                 widget.channel.name,

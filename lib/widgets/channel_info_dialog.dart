@@ -10,26 +10,33 @@ class ChannelInfoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white.withOpacity(0.7),
-      content: GridTile(
-        child: Hero(
-          tag: 'channel-grid-logo',
-          child: FadeInImage(
-            placeholder: AssetImage(radioImage),
-            image: NetworkImage(
-              channel.imageUrl,
+      elevation: double.minPositive,
+      backgroundColor: Theme.of(context).accentColor.withOpacity(0.7),
+      content: Column(
+        children: [
+          Hero(
+            tag: 'channel-logo',
+            child: Container(
+              width: 150,
+              height: 150,
+              child: FadeInImage(
+                placeholder: AssetImage(radioImage),
+                image: NetworkImage(
+                  channel.imageUrl,
+                ),
+              ),
             ),
           ),
-        ),
-        footer: GridTileBar(
-          backgroundColor: Colors.teal,
-          title: Center(
-            child: Text(
-              channel.name,
-              style: TextStyle(fontSize: 20),
+          Card(
+            color: Theme.of(context).primaryColor,
+            child: Center(
+              child: Text(
+                channel.name,
+                style: TextStyle(fontSize: 20),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
