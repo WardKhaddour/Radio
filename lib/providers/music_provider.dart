@@ -6,7 +6,7 @@ import '../services/files_getter.dart';
 
 class MusicProvider with ChangeNotifier {
   List<File> _files = [];
-  List<Directory> _directory = [];
+  List<Directory> _directories = [];
   List<File> searchFile(String fileName) {
     List<File> temp = [];
     _files.forEach(
@@ -24,7 +24,7 @@ class MusicProvider with ChangeNotifier {
   }
 
   List<Directory> get directory {
-    return [..._directory];
+    return [..._directories];
   }
 
   Future<void> getFiles() async {
@@ -50,7 +50,7 @@ class MusicProvider with ChangeNotifier {
           filesGetter.filterFiles(internalStorageDirectory);
       _files = filesGetter.filterSongs(sdCardFiles) +
           filesGetter.filterSongs(internalStorageFiles);
-      _directory = filesGetter.directory;
+      _directories = filesGetter.directories;
     }
     notifyListeners();
   }

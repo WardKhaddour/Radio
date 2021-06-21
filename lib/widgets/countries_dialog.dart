@@ -14,7 +14,7 @@ class _CountriesDialogState extends State<CountriesDialog> {
   String _currentCountry = 'Syrian Arab Republic';
   List<String> _searchResult = [];
   List<String> _countries = [];
-  String _searchName = ' ';
+  String _searchName = '';
   bool _isLoading = false;
   @override
   void initState() {
@@ -59,6 +59,15 @@ class _CountriesDialogState extends State<CountriesDialog> {
           decoration: InputDecoration(
             hintText: 'Input Country Name',
             hintStyle: TextStyle(color: Colors.grey),
+            // icon: IconButton(
+            //   icon: Icon(Icons.clear),
+            //   onPressed: () {
+            //     setState(() {
+            //       _searchName = '';
+
+            //     });
+            //   },
+            // ),
           ),
         ),
       ),
@@ -66,25 +75,58 @@ class _CountriesDialogState extends State<CountriesDialog> {
           ? SpinKitDualRing(color: Theme.of(context).primaryColor)
           : ListView.builder(
               itemCount: _countries.length,
-              itemBuilder: (context, index) =>
-                  _countries.isNotEmpty && _countries != null
-                      ? TextButton(
-                          child: Text(_countries[index]),
-                          onPressed: () async {
-                            _currentCountry = _countries[index];
-                            final pref = await SharedPreferences.getInstance();
-                            pref.setString('country', _countries[index]);
+              itemBuilder: (context, index) {
+                int searchNameIndex =
+                    _countries[index].indexOf(_searchName) == -1
+                        ? 0
+                        : _countries[index]
+                            .toLowerCase()
+                            .indexOf(_searchName.toLowerCase());
 
-                            await Provider.of<ChannelsProvider>(context,
-                                    listen: false)
-                                .updateChannels(_currentCountry);
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            Navigator.of(context).pop(_currentCountry);
-                          },
-                        )
-                      : Text(''),
+                return _countries.isNotEmpty && _countries != null
+                    ? TextButton(
+                        child: !_countries[index]
+                                .toLowerCase()
+                                .contains(_searchName.toLowerCase())
+                            ? Text(_countries[index])
+                            : RichText(
+                                text: TextSpan(
+                                    text: _countries[index]
+                                        .substring(0, searchNameIndex),
+                                    style: TextStyle(color: Colors.teal),
+                                    children: [
+                                      TextSpan(
+                                        text: _searchName,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: _countries[index].substring(
+                                            searchNameIndex +
+                                                _searchName.length,
+                                            _countries[index].length),
+                                        style: TextStyle(color: Colors.teal),
+                                      ),
+                                    ]),
+                              ),
+                        onPressed: () async {
+                          _currentCountry = _countries[index];
+                          final pref = await SharedPreferences.getInstance();
+                          pref.setString('country', _countries[index]);
+
+                          await Provider.of<ChannelsProvider>(context,
+                                  listen: false)
+                              .updateChannels(_currentCountry);
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          Navigator.of(context).pop(_currentCountry);
+                        },
+                      )
+                    : Text('');
+              },
             ),
     );
   }

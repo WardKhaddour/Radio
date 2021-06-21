@@ -15,15 +15,16 @@ class AppDrawer extends StatelessWidget {
           child: CustomScrollView(
         slivers: [
           SliverAppBar(
-            titleSpacing: 400,
+            centerTitle: false,
+            expandedHeight: 250,
             automaticallyImplyLeading: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.none,
               title: Text(
                 'TasQment',
                 style: TextStyle(
-                    color: Colors.grey.withOpacity(0.7), fontSize: 20),
-                textAlign: TextAlign.center,
+                    color: Colors.white.withOpacity(0.7), fontSize: 20),
               ),
               background: GestureDetector(
                 onTap: () async {
@@ -47,6 +48,8 @@ class AppDrawer extends StatelessWidget {
                   text: 'Radio Channels',
                   icon: Icons.radio,
                   onPress: () {
+                    Navigator.of(context).pop();
+
                     Navigator.of(context)
                         .pushNamed(RadioChannelsScreen.routeName);
                   },
@@ -56,6 +59,8 @@ class AppDrawer extends StatelessWidget {
                   text: 'My Music',
                   icon: Icons.music_note,
                   onPress: () {
+                    Navigator.of(context).pop();
+
                     Navigator.of(context).pushNamed(MusicScreen.routeName);
                   },
                 ),
@@ -64,6 +69,8 @@ class AppDrawer extends StatelessWidget {
                   text: 'Open URL',
                   icon: Icons.web,
                   onPress: () {
+                    Navigator.of(context).pop();
+
                     Navigator.of(context).pushNamed(OpenURLScreen.routeName);
                   },
                 ),
@@ -72,11 +79,12 @@ class AppDrawer extends StatelessWidget {
                   text: 'Recycle Bin',
                   icon: Icons.delete,
                   onPress: () {
+                    Navigator.of(context).pop();
                     Navigator.of(context).pushNamed(RecycleBin.routeName);
                   },
                 ),
                 Divider(),
-                SizedBox(height: 8000),
+                SizedBox(height: 200),
               ],
             ),
           ),

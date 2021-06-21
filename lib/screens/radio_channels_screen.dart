@@ -30,7 +30,7 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
   bool _activeSearch = false;
   List<Channel> _channels = [];
   List<Channel> _searchResult = [];
-  String _searchName = ' ';
+  String _searchName = '';
   SharedPreferences _pref;
   TextEditingController _controller = TextEditingController();
   @override
@@ -121,6 +121,25 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
       _channels = prov.onlyFav ? prov.favoriteChannels : prov.channels;
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              end: Alignment.topRight,
+              begin: Alignment.bottomLeft,
+              colors: [
+                Colors.teal.shade100,
+                Colors.teal.shade200,
+                Colors.teal.shade300,
+                Colors.teal.shade400,
+                Colors.teal.shade500,
+                Colors.teal.shade600,
+                Colors.teal.shade700,
+                // Colors.teal.shade800,
+                // Colors.teal.shade900,
+              ],
+            ),
+          ),
+        ),
         title: _activeSearch
             ? Padding(
                 padding: const EdgeInsets.all(8.0),

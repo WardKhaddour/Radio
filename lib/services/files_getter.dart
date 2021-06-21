@@ -1,8 +1,7 @@
 import 'dart:io';
 
 class FilesGetter {
-  List<Directory> directory = [];
-
+  List<Directory> directories = [];
   List<File> filterFiles(Directory dir) {
     List<File> temp = [];
     dir.listSync().forEach((element) {
@@ -10,13 +9,13 @@ class FilesGetter {
         final res = filterFiles(Directory(element.path));
         temp.addAll(res);
         if (filterSongs(res).isNotEmpty) {
-          directory.add(element);
+          directories.add(element);
         }
       } else if (element.statSync().type == FileSystemEntityType.file) {
         temp.add(element);
       }
     });
-    print('directory ${directory.toString()}');
+    print('directory ${directories.toString()}');
     return temp;
   }
 

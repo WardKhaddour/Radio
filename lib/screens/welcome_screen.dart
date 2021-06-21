@@ -15,10 +15,23 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with SingleTickerProviderStateMixin {
   bool _loaded = false;
+  AnimationController _controller;
+  Animation _animation;
   @override
   void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
+    );
+    _animation = ColorTween(begin: Colors.teal.shade300, end: Colors.white)
+        .animate(_controller);
+    _controller.forward();
+    _controller.addListener(() {
+      setState(() {});
+    });
     Future.delayed(Duration(seconds: 3)).then((value) async {
       await initAudioService();
       await Provider.of<CheckInternet>(context, listen: false)
@@ -47,6 +60,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _animation.value,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
