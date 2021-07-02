@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:radio/widgets/background.dart';
 import '../constatnts.dart';
 import '../services/player.dart';
 import '../widgets/appbar_flexible_space.dart';
@@ -42,13 +43,7 @@ class _OpenURLScreenState extends State<OpenURLScreen> {
         // ],
       ),
       // drawer: AppDrawer(),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(background),
-            fit: BoxFit.cover,
-          ),
-        ),
+      body: BackGround(
         child: Center(
           child: _isPlaying
               ? SpinKitChasingDots(color: Colors.red)
