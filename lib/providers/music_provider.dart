@@ -7,28 +7,36 @@ import '../services/files_getter.dart';
 class MusicProvider with ChangeNotifier {
   List<File> _files = [];
   List<Directory> _directories = [];
-  List<File> searchFile(String fileName) {
-    List<File> temp = [];
-    _files.forEach(
-      (element) {
-        if (element.path.split('/').last == fileName) {
-          temp.add(element);
-        }
-      },
-    );
-    return temp;
+  List<File> _filesInDir = [];
+  List<File> _searchResult = [];
+  bool _activeSearch = false;
+  bool get activeSearch => _activeSearch;
+  List<Directory> get directories => [..._directories];
+
+  List<File> get files => [..._files];
+
+  List<File> get filesInDir => [..._filesInDir];
+
+  List<File> get searchResult => [..._searchResult];
+  void toggleSearch() {
+    _activeSearch = !_activeSearch;
+    notifyListeners();
   }
 
-  List<File> get files {
-    return [..._files];
-  }
-
-  List<Directory> get directory {
-    return [..._directories];
+  void searchFile(String fileName) {
+    if (fileName.isEmpty) {
+      return;
+    }
+    _searchResult = _files
+        .where((element) =>
+            element.toString().toLowerCase().contains(fileName.toLowerCase()))
+        .toList();
+    notifyListeners();
   }
 
   Future<void> getFiles() async {
     final filesGetter = FilesGetter();
+
     final pathGetter = PathGetter();
 
     final storagePer = await Permission.storage.request();
@@ -45,11 +53,11 @@ class MusicProvider with ChangeNotifier {
     Directory internalStorageDirectory =
         await pathGetter.getInternalStoragePath();
     if (await Permission.storage.request().isGranted) {
-      final sdCardFiles = filesGetter.filterFiles(sdCardDirectory);
+      // final sdCardFiles = filesGetter.filterFiles(sdCardDirectory);
       final internalStorageFiles =
           filesGetter.filterFiles(internalStorageDirectory);
-      _files = filesGetter.filterSongs(sdCardFiles) +
-          filesGetter.filterSongs(internalStorageFiles);
+      // _files = filesGetter.filterSongs(sdCardFiles) +
+      _files = filesGetter.filterSongs(internalStorageFiles);
       _directories = filesGetter.directories;
     }
     notifyListeners();
@@ -58,8 +66,12 @@ class MusicProvider with ChangeNotifier {
   void getFilesFromDirectory(Directory dir) {
     final filesGetter = FilesGetter();
 
-    _files = filesGetter.getFilesFromDirectory(dir);
-    print("files ${_files.toString()}");
+    _filesInDir = filesGetter.getFilesFromDirectory(dir);
+    notifyListeners();
+  }
+
+  void closeFolder() {
+    _filesInDir = [];
     notifyListeners();
   }
 }

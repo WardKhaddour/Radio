@@ -18,6 +18,11 @@ class Player extends StatelessWidget {
             child: FadeInImage(
               placeholder: AssetImage(cd),
               image: NetworkImage(imageURL),
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Image(
+                  image: AssetImage(cd),
+                );
+              },
             ),
           ),
           Text(songName),

@@ -32,14 +32,16 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     _controller.addListener(() {
       setState(() {});
     });
-    Future.delayed(Duration(seconds: 3)).then((value) async {
+    Future.delayed(Duration(seconds: 0)).then((value) async {
       await initAudioService();
-      await Provider.of<CheckInternet>(context, listen: false)
-          .getConnectionStatus();
-      if (CheckInternet().isConnected) {
-        _loaded = true;
-        Navigator.of(context)
-            .pushReplacementNamed(RadioChannelsScreen.routeName);
+      await Provider.of<CheckInternet>(context, listen: false).getConnection();
+      if (Provider.of<CheckInternet>(context, listen: false).isConnected) {
+        Timer(Duration(seconds: 2), () {
+          _loaded = true;
+
+          Navigator.of(context)
+              .pushReplacementNamed(RadioChannelsScreen.routeName);
+        });
       } else {
         showDialog(
           barrierDismissible: true,

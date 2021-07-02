@@ -10,16 +10,16 @@ class ChannelImage extends StatelessWidget {
   final double height;
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: 'channel-logo',
-      child: Container(
-        width: width,
-        height: height,
-        child: FadeInImage(
-          placeholder: AssetImage(radioImage),
-          image: NetworkImage(
-            widget.channel.imageUrl,
-          ),
+    return Container(
+      width: width,
+      height: height,
+      child: FadeInImage(
+        imageErrorBuilder: (context, error, stackTrace) {
+          return Image(image: AssetImage(radioImage));
+        },
+        placeholder: AssetImage(radioImage),
+        image: NetworkImage(
+          widget.channel.imageUrl,
         ),
       ),
     );

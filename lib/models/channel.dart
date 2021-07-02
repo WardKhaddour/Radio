@@ -8,6 +8,7 @@ class Channel {
   final String id;
   bool isFavourite = false;
   bool isDeleted = false;
+  bool deepDelete = false;
 
   Channel({
     @required this.name,
@@ -16,6 +17,7 @@ class Channel {
     @required this.id,
     this.isDeleted,
     this.isFavourite,
+    this.deepDelete,
   });
   void toggleFavourites() async {
     isFavourite = !isFavourite;
@@ -33,5 +35,11 @@ class Channel {
     isDeleted = false;
     final pref = await SharedPreferences.getInstance();
     pref.setBool(id + 'deleted', isDeleted);
+  }
+
+  void deepDeleteChannel() async {
+    deepDelete = true;
+    final pref = await SharedPreferences.getInstance();
+    pref.setBool(id + 'deep delete', deepDelete);
   }
 }

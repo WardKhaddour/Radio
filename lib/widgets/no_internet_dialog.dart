@@ -8,10 +8,10 @@ class NoInternetDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        'You Are Not Connected To Internet',
+        'You are not connected to the internet',
         style: TextStyle(
           color: Theme.of(context).primaryColor,
-          fontSize: 24,
+          fontSize: 20,
         ),
       ),
       content: Image.asset(noSignal),

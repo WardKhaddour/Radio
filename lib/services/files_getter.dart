@@ -1,9 +1,14 @@
 import 'dart:io';
 
 class FilesGetter {
-  List<Directory> directories = [];
+  List<Directory> _directories = [];
+  List<Directory> get directories {
+    return [..._directories];
+  }
+
   List<File> filterFiles(Directory dir) {
     List<File> temp = [];
+    List<Directory> directories = [];
     dir.listSync().forEach((element) {
       if (element.statSync().type == FileSystemEntityType.directory) {
         final res = filterFiles(Directory(element.path));
@@ -15,12 +20,12 @@ class FilesGetter {
         temp.add(element);
       }
     });
-    print('directory ${directories.toString()}');
+    _directories = directories;
     return temp;
   }
 
   List<File> filterSongs(List<File> files) {
-    List<String> extensions = ["mp3", 'wav', 'aac'];
+    List<String> extensions = ['mp3', 'wav', 'aac', 'm4a'];
     List<File> temp = [];
     files.forEach((element) {
       if (extensions.contains(element.path.split('.').last)) {
@@ -37,7 +42,7 @@ class FilesGetter {
         temp.add(element);
       }
     });
-    print('temp ${temp.toString()}');
+    temp = filterSongs(temp);
     return temp;
   }
 }

@@ -1,12 +1,12 @@
-import 'dart:io';
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import '../widgets/folders_view.dart';
+import '../widgets/music_view.dart';
+import '../widgets/appbar_flexible_space.dart';
+import '../widgets/background.dart';
 import '../services/player.dart';
 import '../providers/music_provider.dart';
-import '../widgets/app_drawer.dart';
 
 enum viewType {
   Music,
@@ -22,35 +22,20 @@ class MusicScreen extends StatefulWidget {
 }
 
 class _MusicScreenState extends State<MusicScreen> {
-  List _shownFiles = [];
   bool _playing = false;
-  bool _activeSearch = false;
+  // bool _activeSearch = false;
   String _viewType = describeEnum(viewType.Music);
-  void isPlaying() {
-    AudioService.playbackStateStream.listen((PlaybackState state) {
-      setState(() {
-        _playing = state.playing;
-      });
-    });
-  }
-
+  String _searchName = '';
+  int _index = 0;
   @override
   void initState() {
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await Provider.of<MusicProvider>(context, listen: false).getFiles();
     });
-    isPlaying();
-
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  int _index = 0;
-  void chooseType(int index) {
+  Future<void> chooseType(int index) async {
     if (index == 0) {
       if (_viewType == describeEnum(viewType.Music)) {
         return;
@@ -73,27 +58,41 @@ class _MusicScreenState extends State<MusicScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('build music screen');
-    final prov = Provider.of<MusicProvider>(context);
-    _viewType == describeEnum(viewType.Music)
-        ? _shownFiles = prov.files
-        : _shownFiles = prov.directory;
-
     return Scaffold(
       appBar: AppBar(
-        title: _activeSearch
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Provider.of<MusicProvider>(context, listen: false)
+                    .filesInDir
+                    .isEmpty &&
+                _viewType == describeEnum(viewType.Folders)) {
+              chooseType(0);
+            } else if (Provider.of<MusicProvider>(context, listen: false)
+                    .filesInDir
+                    .isNotEmpty &&
+                _viewType == describeEnum(viewType.Folders)) {
+              Provider.of<MusicProvider>(context, listen: false).closeFolder();
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+        flexibleSpace: AppBarFlexibleSpace(),
+        title: Provider.of<MusicProvider>(context).activeSearch
             ? TextField(
                 autofocus: true,
-                // onChanged: (value) {
-                //   _searchName = value;
-                //   setState(() {
-                //     _searchResult = prov.searchFile(_searchName);
-                //   });
-                // },
+                onChanged: (value) {
+                  _searchName = value;
+                  setState(() {
+                    Provider.of<MusicProvider>(context, listen: false)
+                        .searchFile(_searchName);
+                  });
+                },
               )
             : Text('My Music'),
         actions: [
-          !_activeSearch
+          !Provider.of<MusicProvider>(context).activeSearch
               ? _playing
                   ? IconButton(
                       icon: Icon(Icons.pause),
@@ -107,78 +106,27 @@ class _MusicScreenState extends State<MusicScreen> {
                       })
               : SizedBox(),
           IconButton(
-              icon: Icon(Icons.search),
+              icon: Icon(Provider.of<MusicProvider>(context).activeSearch
+                  ? Icons.close
+                  : Icons.search),
               onPressed: () {
-                setState(() {
-                  _activeSearch = true;
-                });
+                Provider.of<MusicProvider>(context, listen: false)
+                    .toggleSearch();
               }),
         ],
       ),
-      drawer: AppDrawer(),
-      body: RefreshIndicator(
-        color: Theme.of(context).primaryColor,
-        onRefresh: () async {
-          await Provider.of<MusicProvider>(context, listen: false).getFiles();
-        },
-        child: _shownFiles == []
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("Getting Files..."),
-                  SizedBox(height: 20),
-                  SpinKitChasingDots(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ],
-              )
-            : Scrollbar(
-                child: ListView.builder(
-                  itemCount: _shownFiles?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    return Card(
-                        color: _viewType == describeEnum(viewType.Music)
-                            ? Colors.white
-                            : Colors.grey.shade100,
-                        child: ListTile(
-                          title: Text(_viewType == describeEnum(viewType.Music)
-                              ? _shownFiles[index]
-                                  .path
-                                  .split('/')
-                                  .last
-                                  .toString()
-                                  .split('.')
-                                  .first
-                              : _shownFiles[index].path.split('/').last),
-                          leading: Icon(
-                              _viewType == describeEnum(viewType.Music)
-                                  ? Icons.audiotrack
-                                  : Icons.folder),
-                          trailing: _viewType == describeEnum(viewType.Music)
-                              ? Icon(
-                                  Icons.play_arrow,
-                                  color: Theme.of(context).primaryColor,
-                                )
-                              : Text((_shownFiles[index] as Directory)
-                                  .listSync()
-                                  .length
-                                  .toString()),
-                          onTap: () {
-                            _viewType == describeEnum(viewType.Music)
-                                ? Player.play(_shownFiles[index].path)
-                                :
-                                //   _shownFiles =
-                                //       (_shownFiles[index] as Directory)
-                                //           .listSync();
-                                //   _viewType = describeEnum(viewType.Music)
-                                // ;
-                                null;
-                          },
-                        ));
-                  },
-                ),
-              ),
+      // drawer: AppDrawer(),
+
+      body: BackGround(
+        child: RefreshIndicator(
+          color: Theme.of(context).primaryColor,
+          onRefresh: () async {
+            await Provider.of<MusicProvider>(context, listen: false).getFiles();
+          },
+          child: _viewType == describeEnum(viewType.Music)
+              ? MusicView()
+              : FoldersView(),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: chooseType,

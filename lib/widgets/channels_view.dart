@@ -22,7 +22,7 @@ class ChannelsGridView extends StatelessWidget {
         itemBuilder: (BuildContext ctx, int index) {
           return ChannelItem(
             channel: channels[index],
-            viewType: describeEnum(view.Grid),
+            viewType: describeEnum(View.Grid),
           );
         });
   }
@@ -39,7 +39,7 @@ class ChannelsListView extends StatelessWidget {
         itemBuilder: (BuildContext ctx, int index) {
           return ChannelItem(
             channel: channels[index],
-            viewType: describeEnum(view.List),
+            viewType: describeEnum(View.List),
           );
         });
   }

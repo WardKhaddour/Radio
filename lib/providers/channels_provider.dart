@@ -5,26 +5,24 @@ import '../services/channels_getter.dart';
 class ChannelsProvider with ChangeNotifier {
   List<Channel> _channels = [];
   bool onlyFav = false;
+  bool gettingChannels = false;
   //Methods
   Future<void> updateChannels(String countryName) async {
+    gettingChannels = true;
     _channels = await ChannelsGetter().getChannels(countryName);
-
+    gettingChannels = false;
     notifyListeners();
   }
 
-  List<Channel> get channels {
-    return _channels.where((element) => !element.isDeleted).toList();
-  }
+  List<Channel> get channels =>
+      _channels.where((element) => !element.isDeleted).toList();
 
-  List<Channel> get favoriteChannels {
-    return _channels
-        .where((element) => element.isFavourite && !element.isDeleted)
-        .toList();
-  }
+  List<Channel> get favoriteChannels => _channels
+      .where((element) => element.isFavourite && !element.isDeleted)
+      .toList();
 
-  List<Channel> get deletedChannels {
-    return _channels.where((element) => element.isDeleted).toList();
-  }
+  List<Channel> get deletedChannels =>
+      _channels.where((element) => element.isDeleted).toList();
 
   List<Channel> searchResult(String channelName) {
     // final temp = <Channel>[];

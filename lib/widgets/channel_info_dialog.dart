@@ -14,16 +14,13 @@ class ChannelInfoDialog extends StatelessWidget {
       backgroundColor: Theme.of(context).accentColor.withOpacity(0.7),
       content: Column(
         children: [
-          Hero(
-            tag: 'channel-logo',
-            child: Container(
-              width: 150,
-              height: 150,
-              child: FadeInImage(
-                placeholder: AssetImage(radioImage),
-                image: NetworkImage(
-                  channel.imageUrl,
-                ),
+          Container(
+            width: 150,
+            height: 150,
+            child: FadeInImage(
+              placeholder: AssetImage(radioImage),
+              image: NetworkImage(
+                channel.imageUrl,
               ),
             ),
           ),

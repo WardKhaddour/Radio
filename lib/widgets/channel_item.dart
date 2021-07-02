@@ -39,7 +39,7 @@ class _ChannelItemState extends State<ChannelItem> {
           builder: (ctx) => ChannelInfoDialog(channel: widget.channel),
         );
       },
-      child: widget.viewType == describeEnum(view.Grid)
+      child: widget.viewType == describeEnum(View.Grid)
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -47,8 +47,8 @@ class _ChannelItemState extends State<ChannelItem> {
                   flex: 2,
                   child: ChannelImage(
                     widget: widget,
-                    width: 75,
-                    height: 75,
+                    width: 100,
+                    height: 100,
                   ),
                 ),
                 Expanded(

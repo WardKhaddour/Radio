@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: ChannelsProvider()),
         ChangeNotifierProvider.value(value: PlayerProvider()),
         ChangeNotifierProvider.value(value: MusicProvider()),
-        ChangeNotifierProvider.value(value: CheckInternet())
+        ChangeNotifierProvider.value(value: CheckInternet()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
