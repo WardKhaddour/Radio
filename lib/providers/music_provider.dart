@@ -49,7 +49,7 @@ class MusicProvider with ChangeNotifier {
     if (exStoragePer.isDenied) {
       return [];
     }
-    Directory sdCardDirectory = await pathGetter.getExternalSdCardPath();
+    // Directory sdCardDirectory = await pathGetter.getExternalSdCardPath();
     Directory internalStorageDirectory =
         await pathGetter.getInternalStoragePath();
     if (await Permission.storage.request().isGranted) {
