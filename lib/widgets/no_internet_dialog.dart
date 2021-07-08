@@ -20,6 +20,7 @@ class NoInternetDialog extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(
               MusicScreen.routeName,
+              arguments: true,
             );
           },
           child: Text(
@@ -40,6 +41,18 @@ class NoInternetDialog extends StatelessWidget {
             ),
           ),
         ),
+        // ListTile(
+        //   title: Text('Set as default'),
+        //   trailing: Checkbox(
+        //     value: false,
+        //     onChanged: (value) async {
+        //       if (value) {
+        //         final pref = await SharedPreferences.getInstance();
+        //         pref.setString('default', 'music');
+        //       }
+        //     },
+        //   ),
+        // ),
       ],
     );
   }

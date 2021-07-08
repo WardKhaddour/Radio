@@ -26,12 +26,15 @@ class _RecycleBinState extends State<RecycleBin> {
             : [
                 PopupMenuButton(
                   itemBuilder: (context) => [
-                    Text('Restore All'),
+                    TextButton(
+                      onPressed: () {
+                        Provider.of<ChannelsProvider>(context, listen: false)
+                            .restoreAllChannels();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Restore All'),
+                    )
                   ].map((e) => PopupMenuItem(child: e)).toList(),
-                  onSelected: (value) {
-                    Provider.of<ChannelsProvider>(context, listen: false)
-                        .restoreAllChannels();
-                  },
                 ),
               ],
       ),

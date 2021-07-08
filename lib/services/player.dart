@@ -3,12 +3,26 @@ import '../services/background_audio_player.dart';
 
 class Player {
   static Future<void> play(String name) async {
+    print('start');
     if (AudioService.playbackState.playing) await AudioService.stop();
+    print('waiting');
     await initAudioService();
+    print('starting');
     AudioService.start(
+      androidShowNotificationBadge: true,
+      androidNotificationColor: 0xFF26A69A,
+      androidNotificationChannelName: name,
       backgroundTaskEntrypoint: entrypoint,
       params: {'url': name},
     );
+  }
+
+  static Future<void> pause() async {
+    await AudioService.pause();
+  }
+
+  static Future<void> stop() async {
+    await AudioService.stop();
   }
 
   static Future<void> playMusic(String path) async {
@@ -16,13 +30,10 @@ class Player {
 
     await initAudioService();
     AudioService.start(
-        backgroundTaskEntrypoint: entrypoint, params: {'url': path});
+        androidShowNotificationBadge: true,
+        androidNotificationColor: 0xFF26A69A,
+        androidNotificationChannelName: path.split('/').last.split('.').first,
+        backgroundTaskEntrypoint: entrypoint,
+        params: {'url': path});
   }
-//   static Future<void> pauseMusic()async{
-// await AudioService.pause();
-//   }
-//   static Future<void> stopMusic()async{
-// await AudioService.stop();
-//   }
-
 }

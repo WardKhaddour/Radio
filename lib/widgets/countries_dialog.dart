@@ -11,17 +11,17 @@ class CountriesDialog extends StatefulWidget {
 }
 
 class _CountriesDialogState extends State<CountriesDialog> {
-  String initCap(String string) {
-    String s = "";
-    s += string[0].toUpperCase();
-    for (int i = 1; i < string.length; ++i) {
-      if (string[i - 1] == " ")
-        s += string[i].toUpperCase();
-      else
-        s += string[i].toLowerCase();
-    }
-    return s;
-  }
+  // String initCap(String string) {
+  //   String s = "";
+  //   s += string[0].toUpperCase();
+  //   for (int i = 1; i < string.length; ++i) {
+  //     if (string[i - 1] == " ")
+  //       s += string[i].toUpperCase();
+  //     else
+  //       s += string[i].toLowerCase();
+  //   }
+  //   return s;
+  // }
 
   String _currentCountry = 'Syrian Arab Republic';
   List<String> _searchResult = [];

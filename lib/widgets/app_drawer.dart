@@ -6,6 +6,7 @@ import '../screens/music_screen.dart';
 import '../screens/open_url_screen.dart';
 import '../screens/radio_channels_screen.dart';
 import '../screens/recycle_bin.dart';
+import '../screens/settings_screen.dart';
 
 class AppDrawer extends StatefulWidget {
   @override
@@ -158,6 +159,15 @@ class _AppDrawerState extends State<AppDrawer>
                   },
                 ),
                 Divider(),
+                DrawerItem(
+                  text: 'Settings',
+                  icon: Icons.settings,
+                  onPress: () {
+                    Navigator.of(context).pop();
+
+                    Navigator.of(context).pushNamed(SettingsScreen.routeName);
+                  },
+                ),
                 SizedBox(height: 200),
               ],
             ),

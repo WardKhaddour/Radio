@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:radio/widgets/app_drawer.dart';
 import '../widgets/folders_view.dart';
 import '../widgets/music_view.dart';
 import '../widgets/appbar_flexible_space.dart';
@@ -23,12 +24,13 @@ class MusicScreen extends StatefulWidget {
 
 class _MusicScreenState extends State<MusicScreen> {
   bool _playing = false;
-  // bool _activeSearch = false;
   String _viewType = describeEnum(viewType.Music);
   String _searchName = '';
   int _index = 0;
   @override
   void initState() {
+    // _navigateFromWelcomeScreen =
+    //     ModalRoute.of(context).settings.arguments ?? false;
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await Provider.of<MusicProvider>(context, listen: false).getFiles();
     });
@@ -59,25 +61,30 @@ class _MusicScreenState extends State<MusicScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(),
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            if (Provider.of<MusicProvider>(context, listen: false)
-                    .filesInDir
-                    .isEmpty &&
-                _viewType == describeEnum(viewType.Folders)) {
-              chooseType(0);
-            } else if (Provider.of<MusicProvider>(context, listen: false)
-                    .filesInDir
-                    .isNotEmpty &&
-                _viewType == describeEnum(viewType.Folders)) {
-              Provider.of<MusicProvider>(context, listen: false).closeFolder();
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-        ),
+        // leading: _navigateFromWelcomeScreen
+        //     ? SizedBox()
+        //     : IconButton(
+        //         icon: Icon(Icons.arrow_back),
+        //         onPressed: () {
+        //           if (Provider.of<MusicProvider>(context, listen: false)
+        //                   .filesInDir
+        //                   .isEmpty &&
+        //               _viewType == describeEnum(viewType.Folders)) {
+        //             chooseType(0);
+        //           } else if (Provider.of<MusicProvider>(context,
+        //                       listen: false)
+        //                   .filesInDir
+        //                   .isNotEmpty &&
+        //               _viewType == describeEnum(viewType.Folders)) {
+        //             Provider.of<MusicProvider>(context, listen: false)
+        //                 .closeFolder();
+        //           } else {
+        //             Navigator.of(context).pop();
+        //           }
+        //         },
+        //       ),
         flexibleSpace: AppBarFlexibleSpace(),
         title: Provider.of<MusicProvider>(context).activeSearch
             ? TextField(
@@ -113,6 +120,25 @@ class _MusicScreenState extends State<MusicScreen> {
                 Provider.of<MusicProvider>(context, listen: false)
                     .toggleSearch();
               }),
+          IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              if (Provider.of<MusicProvider>(context, listen: false)
+                      .filesInDir
+                      .isEmpty &&
+                  _viewType == describeEnum(viewType.Folders)) {
+                chooseType(0);
+              } else if (Provider.of<MusicProvider>(context, listen: false)
+                      .filesInDir
+                      .isNotEmpty &&
+                  _viewType == describeEnum(viewType.Folders)) {
+                Provider.of<MusicProvider>(context, listen: false)
+                    .closeFolder();
+              } else {
+                Navigator.of(context).pop();
+              }
+            },
+          ),
         ],
       ),
       // drawer: AppDrawer(),

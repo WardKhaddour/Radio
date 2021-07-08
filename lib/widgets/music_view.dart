@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:radio/providers/player_provider.dart';
+import '../screens/player.dart' as playerScreen;
 import '../services/player.dart';
 import '../providers/music_provider.dart';
 import '../widgets/background.dart';
@@ -47,6 +49,18 @@ class _MusicViewState extends State<MusicView> {
                 leading: Icon(Icons.audiotrack),
                 onTap: () {
                   Player.play(_music[index].path);
+                  Provider.of<PlayerProvider>(context, listen: false)
+                      .setCurrentSong(
+                    _music[index]
+                        .path
+                        .split('/')
+                        .last
+                        .toString()
+                        .split('.')
+                        .first,
+                  );
+                  Navigator.of(context)
+                      .pushNamed(playerScreen.Player.routeName);
                 },
               ),
             );

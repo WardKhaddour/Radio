@@ -21,6 +21,7 @@ dependencies:
   url_launcher: ^6.0.6
   audio_service: ^0.17.1
   path_provider: ^2.0.2
+  sqflite: ^2.0.0+3
 dev_dependencies:
   flutter_test:
     sdk: flutter

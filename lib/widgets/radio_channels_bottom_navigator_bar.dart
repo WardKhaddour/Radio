@@ -63,9 +63,9 @@ class _RadioChannelsBottomNavigatorBarState
               radius: 25,
               child: playing
                   ? IconButton(
-                      icon: Icon(Icons.pause),
+                      icon: Icon(Icons.stop),
                       onPressed: () async {
-                        Player.play('');
+                        Player.stop();
                       })
                   : IconButton(
                       icon: Icon(Icons.play_arrow),

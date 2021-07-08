@@ -1,46 +1,24 @@
 import 'package:flutter/cupertino.dart';
-// import 'package:just_audio/just_audio.dart';
 
 class PlayerProvider with ChangeNotifier {
-  // AudioPlayer _audioPlayer = AudioPlayer();
   String _currentChannel;
-  void setCurrentChannel(String name) {
-    _currentChannel = name;
-    notifyListeners();
-  }
+  String _currentSong;
 
   String get currentChannel {
     return _currentChannel;
   }
 
-  // bool isPlaying() {
-  //   return _audioPlayer.playing;
-  // }
+  String get currentSong {
+    return _currentSong;
+  }
 
-  // Future<void> play() async {
-  //   await pause();
-  //   await _audioPlayer.play();
-  //   notifyListeners();
-  // }
+  void setCurrentChannel(String name) {
+    _currentChannel = name;
+    notifyListeners();
+  }
 
-  // Future<void> setPath(String path) async {
-  //   await _audioPlayer.setFilePath(path);
-  //   play();
-  // }
-
-  // Future<void> setURL(String url) async {
-  //   await pause();
-  //   await _audioPlayer.setUrl(url);
-  //   notifyListeners();
-  // }
-
-  // Future<void> pause() async {
-  //   await _audioPlayer.pause();
-  //   notifyListeners();
-  // }
-
-  // Future<void> stop() async {
-  //   await _audioPlayer.stop();
-  //   notifyListeners();
-  // }
+  void setCurrentSong(String name) {
+    _currentSong = name;
+    notifyListeners();
+  }
 }

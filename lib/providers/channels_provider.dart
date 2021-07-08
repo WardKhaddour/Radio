@@ -6,7 +6,6 @@ class ChannelsProvider with ChangeNotifier {
   List<Channel> _channels = [];
   bool onlyFav = false;
   bool gettingChannels = false;
-  //Methods
   Future<void> updateChannels(String countryName) async {
     gettingChannels = true;
     _channels = await ChannelsGetter().getChannels(countryName);
@@ -25,7 +24,6 @@ class ChannelsProvider with ChangeNotifier {
       _channels.where((element) => element.isDeleted).toList();
 
   List<Channel> searchResult(String channelName) {
-    // final temp = <Channel>[];
     if (channelName.isEmpty) {
       return [];
     }
@@ -60,13 +58,13 @@ class ChannelsProvider with ChangeNotifier {
 
   void restoreAllChannels() {
     _channels.forEach((element) {
-      restoreChannel(element.id);
+      if (element.isDeleted) restoreChannel(element.id);
     });
+    notifyListeners();
   }
 
   void restoreChannel(String channelId) {
     _channels.firstWhere((channel) => channel.id == channelId).restoreChannel();
-
     notifyListeners();
   }
 }
