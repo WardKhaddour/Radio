@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:radio/providers/player_provider.dart';
-import '../screens/player.dart' as playerScreen;
+// import '../screens/player.dart' as playerScreen;
 import '../services/player.dart';
 import '../providers/music_provider.dart';
 import '../widgets/background.dart';
@@ -59,8 +59,8 @@ class _MusicViewState extends State<MusicView> {
                         .split('.')
                         .first,
                   );
-                  Navigator.of(context)
-                      .pushNamed(playerScreen.Player.routeName);
+                  // Navigator.of(context)
+                  //     .pushNamed(playerScreen.Player.routeName);
                 },
               ),
             );

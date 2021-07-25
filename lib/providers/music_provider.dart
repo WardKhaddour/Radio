@@ -8,9 +8,11 @@ class MusicProvider with ChangeNotifier {
   List<File> _files = [];
   List<Directory> _directories = [];
   List<File> _filesInDir = [];
-  List<File> _searchResult = [];
+  List _searchResult = [];
   bool _activeSearch = false;
+
   bool get activeSearch => _activeSearch;
+
   List<Directory> get directories => [..._directories];
 
   List<File> get files => [..._files];
@@ -18,8 +20,20 @@ class MusicProvider with ChangeNotifier {
   List<File> get filesInDir => [..._filesInDir];
 
   List<File> get searchResult => [..._searchResult];
+
   void toggleSearch() {
     _activeSearch = !_activeSearch;
+    notifyListeners();
+  }
+
+  void searchFolder(String folderName) {
+    if (folderName.isEmpty) {
+      return;
+    }
+    _searchResult = _directories
+        .where((element) =>
+            element.toString().toLowerCase().contains(folderName.toLowerCase()))
+        .toList();
     notifyListeners();
   }
 
@@ -49,15 +63,17 @@ class MusicProvider with ChangeNotifier {
     if (exStoragePer.isDenied) {
       return [];
     }
-    // Directory sdCardDirectory = await pathGetter.getExternalSdCardPath();
+    Directory sdCardDirectory = await pathGetter.getExternalSdCardPath();
+
     Directory internalStorageDirectory =
         await pathGetter.getInternalStoragePath();
+
     if (await Permission.storage.request().isGranted) {
-      // final sdCardFiles = filesGetter.filterFiles(sdCardDirectory);
+      final sdCardFiles = filesGetter.filterFiles(sdCardDirectory);
       final internalStorageFiles =
           filesGetter.filterFiles(internalStorageDirectory);
-      // _files = filesGetter.filterSongs(sdCardFiles) +
-      _files = filesGetter.filterSongs(internalStorageFiles);
+      _files = filesGetter.filterSongs(sdCardFiles) +
+          filesGetter.filterSongs(internalStorageFiles);
       _directories = filesGetter.directories;
     }
     notifyListeners();

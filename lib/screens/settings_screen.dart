@@ -13,9 +13,19 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _theme = 'Light';
-  String _defaultScreen = 'Radio';
-  SharedPreferences pref;
+  bool _useMusicPlayer = false;
+  SharedPreferences _pref;
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(seconds: 0)).then((value) async {
+      _pref = await SharedPreferences.getInstance();
+      setState(() {
+        _useMusicPlayer = _pref.getBool('default screen') ?? false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,49 +36,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: BackGround(
         child: ListView(
           children: [
-            ListTile(
-              title: Text('Set Default'),
-              trailing: DropdownButton(
-                value: _defaultScreen,
-                items: ['Radio', 'Music Player']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem(
-                    child: Text(value),
-                    value: pref != null
-                        ? pref.getString('default screen') != null
-                            ? pref.getString('default screen')
-                            : 'Radio'
-                        : value,
-                  );
-                }).toList(),
-                onChanged: (String value) async {
-                  setState(() {
-                    _defaultScreen = value;
-                  });
-                  pref = await SharedPreferences.getInstance();
-                  pref.setString('default screen', value);
-                },
-              ),
+            SwitchListTile(
+              activeColor: Colors.teal,
+              title: Text('Use Music Player as Default'),
+              value: _useMusicPlayer,
+              onChanged: (bool value) async {
+                setState(() {
+                  _useMusicPlayer = value;
+                });
+                _pref = await SharedPreferences.getInstance();
+                _pref.setBool('default screen', value);
+              },
             ),
-            ListTile(
-              title: Text('Theme'),
-              trailing: DropdownButton(
-                value: _theme,
-                items: ['Dark', 'Light']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String value) {
-                  setState(() {
-                    _theme = value;
-                    Provider.of<ThemeProvider>(context, listen: false)
-                        .setTheme(value);
-                  });
-                },
-              ),
+            SwitchListTile(
+              activeColor: Colors.teal,
+              value: Provider.of<ThemeProvider>(context).isDarkTheme,
+              title: Text('Use Dark Theme'),
+              onChanged: (value) async {
+                Provider.of<ThemeProvider>(context, listen: false)
+                    .setTheme(value);
+                _pref = await SharedPreferences.getInstance();
+                _pref.setBool('use dark theme', value);
+              },
             ),
           ],
         ),

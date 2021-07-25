@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:provider/provider.dart';
+import 'package:radio/providers/theme_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/background_audio_player.dart';
 import '../providers/check_internet_provider.dart';
@@ -20,10 +21,12 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
+  ReorderableListView re =
+      ReorderableListView(children: [], onReorder: (int a, int b) {});
   bool _loaded = false;
   AnimationController _controller;
   Animation _animation;
-  String route;
+  bool musicPlayerRoute;
   @override
   void initState() {
     _controller = AnimationController(
@@ -39,13 +42,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await initAudioService();
       final pref = await SharedPreferences.getInstance();
-      route = pref.getString('default screen') ?? 'Radio';
+      musicPlayerRoute = pref.getBool('default screen') ?? false;
+      Provider.of<ThemeProvider>(context, listen: false)
+          .setTheme(pref.getBool('use dark theme') ?? false);
       if (await Provider.of<CheckInternet>(context, listen: false)
           .getConnectionStatus()) {
         Timer(Duration(seconds: 2), () {
           _loaded = true;
 
-          Navigator.of(context).pushReplacementNamed(route == 'Radio'
+          Navigator.of(context).pushReplacementNamed(!musicPlayerRoute
               ? RadioChannelsScreen.routeName
               : MusicScreen.routeName);
         });

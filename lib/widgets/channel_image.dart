@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import './channel_item.dart';
-
 import '../constatnts.dart';
 
 class ChannelImage extends StatelessWidget {

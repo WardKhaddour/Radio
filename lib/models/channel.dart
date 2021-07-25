@@ -19,25 +19,25 @@ class Channel {
     this.isFavourite,
     this.deepDelete,
   });
-  void toggleFavourites() async {
+  Future<void> toggleFavourites() async {
     isFavourite = !isFavourite;
     final pref = await SharedPreferences.getInstance();
     pref.setBool(id + 'favorite', isFavourite);
   }
 
-  void deleteChannel() async {
+  Future<void> deleteChannel() async {
     isDeleted = true;
     final pref = await SharedPreferences.getInstance();
     pref.setBool(id + 'deleted', isDeleted);
   }
 
-  void restoreChannel() async {
+  Future<void> restoreChannel() async {
     isDeleted = false;
     final pref = await SharedPreferences.getInstance();
     pref.setBool(id + 'deleted', isDeleted);
   }
 
-  void deepDeleteChannel() async {
+  Future<void> deepDeleteChannel() async {
     deepDelete = true;
     final pref = await SharedPreferences.getInstance();
     pref.setBool(id + 'deep delete', deepDelete);

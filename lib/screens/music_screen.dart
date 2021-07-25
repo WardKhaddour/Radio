@@ -63,28 +63,6 @@ class _MusicScreenState extends State<MusicScreen> {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-        // leading: _navigateFromWelcomeScreen
-        //     ? SizedBox()
-        //     : IconButton(
-        //         icon: Icon(Icons.arrow_back),
-        //         onPressed: () {
-        //           if (Provider.of<MusicProvider>(context, listen: false)
-        //                   .filesInDir
-        //                   .isEmpty &&
-        //               _viewType == describeEnum(viewType.Folders)) {
-        //             chooseType(0);
-        //           } else if (Provider.of<MusicProvider>(context,
-        //                       listen: false)
-        //                   .filesInDir
-        //                   .isNotEmpty &&
-        //               _viewType == describeEnum(viewType.Folders)) {
-        //             Provider.of<MusicProvider>(context, listen: false)
-        //                 .closeFolder();
-        //           } else {
-        //             Navigator.of(context).pop();
-        //           }
-        //         },
-        //       ),
         flexibleSpace: AppBarFlexibleSpace(),
         title: Provider.of<MusicProvider>(context).activeSearch
             ? TextField(
@@ -92,24 +70,49 @@ class _MusicScreenState extends State<MusicScreen> {
                 onChanged: (value) {
                   _searchName = value;
                   setState(() {
-                    Provider.of<MusicProvider>(context, listen: false)
-                        .searchFile(_searchName);
+                    _viewType == describeEnum(viewType.Music)
+                        ? Provider.of<MusicProvider>(context, listen: false)
+                            .searchFile(_searchName)
+                        : Provider.of<MusicProvider>(context, listen: false)
+                            .searchFolder(_searchName);
                   });
                 },
               )
             : Text('My Music'),
         actions: [
+          Provider.of<MusicProvider>(context).activeSearch
+              ? SizedBox()
+              : IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    if (Provider.of<MusicProvider>(context, listen: false)
+                            .filesInDir
+                            .isEmpty &&
+                        _viewType == describeEnum(viewType.Folders)) {
+                      chooseType(0);
+                    } else if (Provider.of<MusicProvider>(context,
+                                listen: false)
+                            .filesInDir
+                            .isNotEmpty &&
+                        _viewType == describeEnum(viewType.Folders)) {
+                      Provider.of<MusicProvider>(context, listen: false)
+                          .closeFolder();
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                ),
           !Provider.of<MusicProvider>(context).activeSearch
               ? _playing
                   ? IconButton(
                       icon: Icon(Icons.pause),
                       onPressed: () async {
-                        Player.play('');
+                        Player.playMusic('');
                       })
                   : IconButton(
                       icon: Icon(Icons.play_arrow),
                       onPressed: () async {
-                        Player.play('');
+                        Player.playMusic('');
                       })
               : SizedBox(),
           IconButton(
@@ -120,25 +123,6 @@ class _MusicScreenState extends State<MusicScreen> {
                 Provider.of<MusicProvider>(context, listen: false)
                     .toggleSearch();
               }),
-          IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              if (Provider.of<MusicProvider>(context, listen: false)
-                      .filesInDir
-                      .isEmpty &&
-                  _viewType == describeEnum(viewType.Folders)) {
-                chooseType(0);
-              } else if (Provider.of<MusicProvider>(context, listen: false)
-                      .filesInDir
-                      .isNotEmpty &&
-                  _viewType == describeEnum(viewType.Folders)) {
-                Provider.of<MusicProvider>(context, listen: false)
-                    .closeFolder();
-              } else {
-                Navigator.of(context).pop();
-              }
-            },
-          ),
         ],
       ),
       // drawer: AppDrawer(),

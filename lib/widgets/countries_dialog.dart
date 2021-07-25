@@ -64,6 +64,8 @@ class _CountriesDialogState extends State<CountriesDialog> {
     }
     return AlertDialog(
       title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
             flex: 4,
@@ -106,54 +108,59 @@ class _CountriesDialogState extends State<CountriesDialog> {
       ),
       content: _isLoading
           ? SpinKitDualRing(color: Theme.of(context).primaryColor)
-          : ListView.builder(
-              itemCount: _countries.length,
-              itemBuilder: (context, index) {
-                return _countries.isNotEmpty && _countries != null
-                    ? TextButton(
-                        child: searchNamesIndexes[index] == -1
-                            ? Text(_countries[index])
-                            : RichText(
-                                text: TextSpan(
-                                  text: _countries[index]
-                                      .substring(0, searchNamesIndexes[index]),
-                                  style: TextStyle(color: Colors.teal),
-                                  children: [
-                                    TextSpan(
-                                      text: _countries[index].substring(
-                                          searchNamesIndexes[index],
-                                          searchNamesIndexes[index] +
-                                              _searchName.length),
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
+          : Container(
+              width: 300,
+              height: 300,
+              child: ListView.builder(
+                itemCount: _countries.length,
+                itemBuilder: (context, index) {
+                  return _countries.isNotEmpty && _countries != null
+                      ? TextButton(
+                          child: searchNamesIndexes[index] == -1
+                              ? Text(_countries[index])
+                              : RichText(
+                                  text: TextSpan(
+                                    text: _countries[index].substring(
+                                        0, searchNamesIndexes[index]),
+                                    style: TextStyle(color: Colors.teal),
+                                    children: [
+                                      TextSpan(
+                                        text: _countries[index].substring(
+                                            searchNamesIndexes[index],
+                                            searchNamesIndexes[index] +
+                                                _searchName.length),
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    TextSpan(
-                                      text: _countries[index].substring(
-                                          searchNamesIndexes[index] +
-                                              _searchName.length,
-                                          _countries[index].length),
-                                      style: TextStyle(color: Colors.teal),
-                                    ),
-                                  ],
+                                      TextSpan(
+                                        text: _countries[index].substring(
+                                            searchNamesIndexes[index] +
+                                                _searchName.length,
+                                            _countries[index].length),
+                                        style: TextStyle(color: Colors.teal),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                        onPressed: () async {
-                          _currentCountry = _countries[index];
-                          final pref = await SharedPreferences.getInstance();
-                          pref.setString('country', _countries[index]);
+                          onPressed: () async {
+                            _currentCountry = _countries[index];
+                            final pref = await SharedPreferences.getInstance();
+                            pref.setString('country', _countries[index]);
 
-                          Provider.of<ChannelsProvider>(context, listen: false)
-                              .updateChannels(_currentCountry);
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          Navigator.of(context).pop(_currentCountry);
-                        },
-                      )
-                    : Text('');
-              },
+                            Provider.of<ChannelsProvider>(context,
+                                    listen: false)
+                                .updateChannels(_currentCountry);
+                            setState(() {
+                              _isLoading = false;
+                            });
+                            Navigator.of(context).pop(_currentCountry);
+                          },
+                        )
+                      : Text('');
+                },
+              ),
             ),
     );
   }

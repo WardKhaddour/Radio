@@ -20,7 +20,7 @@ class FilesGetter {
         temp.add(element);
       }
     });
-    _directories = directories;
+    _directories.addAll(directories);
     return temp;
   }
 
