@@ -46,7 +46,10 @@ class _RadioChannelsScreenState extends State<RadioChannelsScreen> {
       _isLoading = true;
     });
     await Provider.of<ChannelsProvider>(context, listen: false)
-        .updateChannels(_currentCountry);
+        .updateChannels(_currentCountry)
+        .then((_) => _channels =
+            Provider.of<ChannelsProvider>(context, listen: false).channels);
+
     setState(() {
       _isLoading = false;
     });

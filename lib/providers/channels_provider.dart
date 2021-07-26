@@ -58,7 +58,7 @@ class ChannelsProvider with ChangeNotifier {
 
   void restoreAllChannels() {
     _channels.forEach((element) {
-      if (element.isDeleted) restoreChannel(element.id);
+      if (element.isDeleted) element.restoreChannel();
     });
     notifyListeners();
   }
